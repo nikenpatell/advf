@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ── Core ─────────────────────────────────────────── */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+
+    /* ── Card ────────────────────────────────────────── */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+
+    /* ── Popover ─────────────────────────────────────── */
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+
+    /* ── Primary ─────────────────────────────────────── */
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+
+    /* ── Secondary ───────────────────────────────────── */
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 0%;
+
+    /* ── Muted ───────────────────────────────────────── */
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    /* ── Accent ──────────────────────────────────────── */
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 0%;
+
+    /* ── Destructive ─────────────────────────────────── */
+    --destructive: 0 0% 0%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* ── Success ─────────────────────────────────────── */
+    --success: 142.1 70.6% 45.3%;
+    --success-foreground: 144.9 80.4% 10%;
+    
+    /* ── Warning ─────────────────────────────────────── */
+    --warning: 47.9 95.8% 53.1%;
+    --warning-foreground: 26 83.3% 14.1%;
+
+    /* ── Border / Input ──────────────────────────────── */
+    --border: 0 0% 89%;
+    --input: 0 0% 89%;
+    --ring: 0 0% 0%;
+
+    /* ── Radius ──────────────────────────────────────── */
+    --radius: 1rem;
+
+    /* ── Sidebar ─────────────────────────────────────── */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 0%;
+    --sidebar-primary: 0 0% 0%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-border: 0 0% 89%;
+    --sidebar-ring: 0 0% 0%;
+  }
+
+  .dark {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 0 0% 10%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 0% 100%;
+    --destructive-foreground: 0 0% 0%;
+
+    --success: 142.1 70.6% 45.3%;
+    --success-foreground: 144.9 80.4% 95.9%;
+    
+    --warning: 47.9 95.8% 53.1%;
+    --warning-foreground: 26 83.3% 20%;
+
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 0 0% 100%;
+
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 0 0% 100%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-none ring-0;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tighter;
+  }
+
+  /* Simple Scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-foreground/10;
+  }
+}
+
+@layer utilities {
+  .page-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .card-shadow {
+    @apply shadow-sm ring-1 ring-border;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.2s ease-out;
+  }
+}
