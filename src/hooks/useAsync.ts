@@ -6,6 +6,7 @@ interface AsyncState<T> {
   error: string | null;
 }
 
+
 export function useAsync<TResult, TArgs extends unknown[]>(
   asyncFn: (...args: TArgs) => Promise<TResult>
 ) {
