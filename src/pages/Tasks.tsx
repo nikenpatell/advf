@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/ui/page-header";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -185,7 +184,7 @@ export default function Tasks() {
                 </Badge>
               </DataTableCell>
               <DataTableCell>
-                {task.assignedTo ? (
+                {task.assignedTo && typeof task.assignedTo !== "string" ? (
                   <div className="flex items-center gap-2.5 group/persona text-left justify-start">
                     <Avatar className="h-8 w-8 rounded-[10px] border-2 border-background shadow-sm ring-1 ring-border/20 transition-transform group-hover/persona:scale-105">
                       <AvatarFallback className="bg-primary text-primary-foreground font-black text-[10px]">{task.assignedTo.name.charAt(0)}</AvatarFallback>
@@ -196,7 +195,9 @@ export default function Tasks() {
                     </div>
                   </div>
                 ) : (
-                  <span className="text-[10px] font-bold text-muted-foreground italic">Unassigned Entity</span>
+                  <span className="text-[10px] font-bold text-muted-foreground italic">
+                    {typeof task.assignedTo === 'string' ? 'Assigned (ID)' : 'Unassigned Entity'}
+                  </span>
                 )}
               </DataTableCell>
               <DataTableCell>

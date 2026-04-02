@@ -17,7 +17,7 @@ export interface TaskItem {
   dueDate?: string;
   organizationId: string;
   createdBy: { _id: string; name: string; email: string; role?: UserRole };
-  assignedTo?: { _id: string; name: string; email: string; role?: UserRole };
+  assignedTo?: string | { _id: string; name: string; email: string; role?: UserRole };
   history: TaskHistory[];
   createdAt: string;
 }

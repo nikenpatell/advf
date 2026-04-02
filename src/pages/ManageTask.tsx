@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
-import { createTask, updateTask, getTasks, type TaskItem } from "@/services/task.service";
+import { createTask, updateTask, getTasks } from "@/services/task.service";
 import { getTeamMembers, type TeamMember } from "@/services/team.service";
 import { 
   Select, 
@@ -58,7 +58,7 @@ export default function ManageTask() {
 
         if (isEdit) {
           const tasksRes = await getTasks();
-          const task = tasksRes.data.find((t: any) => t.id === id);
+          const task = tasksRes.data.find((t: any) => t._id === id);
           if (task) {
             setFormData({
               title: task.title,
@@ -66,7 +66,7 @@ export default function ManageTask() {
               priority: task.priority,
               status: task.status,
               dueDate: task.dueDate || "",
-              assignedTo: task.assignedTo?.id || ""
+              assignedTo: (task.assignedTo as any)?._id || ""
             });
           } else {
             toast.error("Task not found in workstation registry.");

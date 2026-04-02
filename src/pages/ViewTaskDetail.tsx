@@ -11,7 +11,6 @@ import {
   History,
   Shield,
   FileText,
-  Calendar as CalendarIcon,
   CheckCircle2,
   AlertCircle,
   Clock3,
@@ -225,19 +224,19 @@ export default function ViewTaskDetail() {
                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                           <User className="h-3 w-3" /> Assigned Personnel
                        </span>
-                       {task.assignedTo ? (
+                       {task.assignedTo && typeof task.assignedTo !== "string" ? (
                          <div className="flex items-center gap-4 group">
                            <Avatar className="h-12 w-12 border-4 border-background ring-2 ring-border/20 shadow-2xl rounded-[18px]">
-                             <AvatarFallback className="bg-primary text-primary-foreground font-black text-sm">{task.assignedTo.name.charAt(0)}</AvatarFallback>
+                             <AvatarFallback className="bg-primary text-primary-foreground font-black text-sm">{(task.assignedTo as any).name.charAt(0)}</AvatarFallback>
                            </Avatar>
                            <div className="flex flex-col">
-                             <span className="text-sm font-black text-foreground">{task.assignedTo.name}</span>
-                             <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">{(task.assignedTo.role || "MEMBER").replace('_', ' ')} Registry</span>
+                             <span className="text-sm font-black text-foreground">{(task.assignedTo as any).name}</span>
+                             <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">{((task.assignedTo as any).role || "MEMBER").replace('_', ' ')} Registry</span>
                            </div>
                          </div>
                        ) : (
                          <div className="flex items-center gap-3 h-12 text-muted-foreground/30 font-bold italic text-xs uppercase tracking-tight">
-                            Unassigned Platform Entity
+                            {typeof task.assignedTo === 'string' ? "Assigned Stakeholder (ID)" : "Unassigned Platform Entity"}
                          </div>
                        )}
                     </div>

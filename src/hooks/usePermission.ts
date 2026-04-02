@@ -7,6 +7,7 @@ export type PermissionModule =
   | "TEAM" 
   | "CLIENT" 
   | "REGISTRY" 
+  | "ROLE"
   | "CALENDAR";
 
 export type PermissionAction = "VIEW" | "CREATE" | "UPDATE" | "DELETE";

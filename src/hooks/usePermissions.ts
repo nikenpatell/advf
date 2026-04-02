@@ -16,7 +16,7 @@ export function usePermissions() {
     return roles.includes(user.role);
   };
 
-  const isAdmin = hasRole("ADMIN", "SUPER_ADMIN");
+  const isAdmin = hasRole("ORG_ADMIN", "SUPER_ADMIN");
   const isSuperAdmin = hasRole("SUPER_ADMIN");
 
   return {

@@ -14,7 +14,6 @@ import {
   Mail, 
   Phone, 
   Lock,
-  ChevronRight,
   Briefcase
 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -24,7 +23,7 @@ import {
   createTeamMember, 
   updateTeamMember 
 } from "@/services/team.service";
-import { useOrgStore } from "@/store/useOrgStore";
+// Removed useOrgStore
 import { 
   Select, 
   SelectContent, 
@@ -37,7 +36,6 @@ import { Badge } from "@/components/ui/badge";
 export default function ManageClient() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { currentOrg } = useOrgStore();
   const isEdit = !!id;
 
   const [loading, setLoading] = useState(isEdit);

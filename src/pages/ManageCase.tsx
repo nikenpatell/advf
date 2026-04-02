@@ -7,13 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { 
   ArrowLeft, 
-  Save, 
   Scale, 
-  User, 
   Users, 
-  Calendar as CalendarIcon, 
-  Gavel, 
-  FileText,
+  Calendar as CalendarIcon
 } from "lucide-react";
 import { 
   Select, 

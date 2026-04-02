@@ -18,7 +18,6 @@ import { Button } from "@/components/ui/button";
 import { 
   ArrowUpRight, 
   ArrowDownRight, 
-  MoreHorizontal, 
   Columns,
   Plus,
   CheckCircle2,
