@@ -24,9 +24,6 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePermission } from "@/hooks/usePermission";
-import { addTaskComment } from "@/services/task.service";
-import { Input } from "@/components/ui/input";
-import { MessageSquare, Send } from "lucide-react";
 
 const PRIORITY_COLORS = {
   LOW: "bg-blue-500/10 text-blue-500 border-blue-500/20",
@@ -48,8 +45,6 @@ export default function ViewTaskDetail() {
   const { hasPermission } = usePermission();
   const [task, setTask] = useState<TaskItem | null>(null);
   const [loading, setLoading] = useState(true);
-  const [commentText, setCommentText] = useState("");
-  const [addingComment, setAddingComment] = useState(false);
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -67,21 +62,7 @@ export default function ViewTaskDetail() {
     fetchTask();
   }, [id, navigate]);
 
-  const handleAddComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!commentText.trim()) return;
-    try {
-      setAddingComment(true);
-      const res = await addTaskComment(id!, commentText);
-      setTask(res.data);
-      setCommentText("");
-      toast.success("Discussion point registered.");
-    } catch (err: any) {
-      toast.error("Failed to commit discussion.");
-    } finally {
-      setAddingComment(false);
-    }
-  };
+
 
   if (loading) {
     return (

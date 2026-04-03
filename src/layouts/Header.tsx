@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
 import { useOrgStore } from "@/store/useOrgStore";
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { 
-  Plus, Mail, Menu, Search, Bell, Moon, Sun, Monitor, LogOut, 
+  Menu, Search, Bell, Moon, Sun, Monitor, LogOut, 
   UserCircle2, ShieldCheck, FileText, CheckSquare, Loader2, RefreshCw
 } from "lucide-react";
 import toast from "react-hot-toast";
