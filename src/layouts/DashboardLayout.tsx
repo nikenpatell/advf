@@ -9,7 +9,7 @@ export default function DashboardLayout() {
       <div className="flex w-0 flex-1 flex-col overflow-hidden">
         <Header />
         <main className="relative flex-1 overflow-y-auto bg-background focus:outline-none">
-          <div className="mx-auto max-w-[1600px] px-6 py-8">
+          <div className="mx-auto max-w-[1600px] p-4 md:p-6 lg:p-8">
             <Outlet />
           </div>
         </main>

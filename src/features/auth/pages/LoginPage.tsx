@@ -80,7 +80,10 @@ export default function LoginPage() {
 
           if (!res.data.user.isVerified) {
             navigate(ROUTES.VERIFY_OTP, {
-              state: { email: res.data.user.email },
+              state: { 
+                email: res.data.user.email,
+                role: selectedRole
+              },
               replace: true,
             });
           } else {

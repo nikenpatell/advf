@@ -1,4 +1,5 @@
 import api from "./api";
+import { API } from "./endpoints";
 import { ApiResponse } from "@/types/auth";
 
 export interface TypeRegistryItem {
@@ -12,24 +13,22 @@ export interface TypeRegistryItem {
   createdAt: string;
 }
 
-const REGISTRY_URL = "/registry";
-
 export const getRegistry = async (category: string) => {
-  const { data } = await api.get<ApiResponse<TypeRegistryItem[]>>(`${REGISTRY_URL}/${category}`);
+  const { data } = await api.get<ApiResponse<TypeRegistryItem[]>>(API.REGISTRY.LIST(category));
   return data;
 };
 
 export const createType = async (payload: Partial<TypeRegistryItem>) => {
-  const { data } = await api.post<ApiResponse<TypeRegistryItem>>(REGISTRY_URL, payload);
+  const { data } = await api.post<ApiResponse<TypeRegistryItem>>(API.REGISTRY.CREATE, payload);
   return data;
 };
 
 export const updateType = async (id: string, payload: Partial<TypeRegistryItem>) => {
-  const { data } = await api.put<ApiResponse<TypeRegistryItem>>(`${REGISTRY_URL}/${id}`, payload);
+  const { data } = await api.put<ApiResponse<TypeRegistryItem>>(API.REGISTRY.UPDATE(id), payload);
   return data;
 };
 
 export const deleteType = async (id: string) => {
-  const { data } = await api.delete<ApiResponse<null>>(`${REGISTRY_URL}/${id}`);
+  const { data } = await api.delete<ApiResponse<null>>(API.REGISTRY.DELETE(id));
   return data;
 };

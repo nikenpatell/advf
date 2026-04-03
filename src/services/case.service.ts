@@ -32,3 +32,8 @@ export const addHearing = async (caseId: string, payload: { hearingDate: string;
   const { data } = await api.post<ApiResponse<HearingHistory>>(API.CASES.ADD_HEARING(caseId), payload);
   return data;
 };
+
+export const addCaseComment = async (caseId: string, text: string) => {
+  const { data } = await api.post<ApiResponse<CaseItem>>(`/cases/${caseId}/comments`, { text });
+  return data;
+};

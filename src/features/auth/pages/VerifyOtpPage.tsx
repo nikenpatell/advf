@@ -12,10 +12,12 @@ import { verifyOtp } from "../services/auth.service";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import type { UserRole } from "@/types/auth";
 
 interface VerifyOtpPayload {
   email: string;
   otp: string;
+  role?: UserRole;
 }
 
 export default function VerifyOtpPage() {
@@ -25,9 +27,10 @@ export default function VerifyOtpPage() {
   const { user, setUser } = useAuthStore();
 
   const passedEmail = location.state?.email || "";
+  const passedRole = (location.state?.role as UserRole) || undefined;
 
   const formik = useFormik<VerifyOtpPayload>({
-    initialValues: { email: passedEmail, otp: "" },
+    initialValues: { email: passedEmail, otp: "", role: passedRole },
     validationSchema: verifyOtpSchema,
     onSubmit: async (values) => {
       try {

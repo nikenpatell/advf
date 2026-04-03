@@ -18,12 +18,15 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
-import { getTasks, type TaskItem } from "@/services/task.service";
+import { getTaskById, type TaskItem } from "@/services/task.service";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePermission } from "@/hooks/usePermission";
+import { addTaskComment } from "@/services/task.service";
+import { Input } from "@/components/ui/input";
+import { MessageSquare, Send } from "lucide-react";
 
 const PRIORITY_COLORS = {
   LOW: "bg-blue-500/10 text-blue-500 border-blue-500/20",
@@ -45,26 +48,40 @@ export default function ViewTaskDetail() {
   const { hasPermission } = usePermission();
   const [task, setTask] = useState<TaskItem | null>(null);
   const [loading, setLoading] = useState(true);
+  const [commentText, setCommentText] = useState("");
+  const [addingComment, setAddingComment] = useState(false);
 
   useEffect(() => {
     const fetchTask = async () => {
+      if (!id) return;
       try {
-        const res = await getTasks();
-        const found = res.data.find((t: any) => t._id === id);
-        if (found) {
-          setTask(found);
-        } else {
-          toast.error("Initiative identity not found");
-          navigate("/tasks");
-        }
+        const res = await getTaskById(id);
+        setTask(res.data);
       } catch (err) {
-        toast.error("Cloud synchronization failed");
+        toast.error("Initiative identity not found or synchronization failed");
+        navigate("/tasks");
       } finally {
         setLoading(false);
       }
     };
     fetchTask();
   }, [id, navigate]);
+
+  const handleAddComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+    try {
+      setAddingComment(true);
+      const res = await addTaskComment(id!, commentText);
+      setTask(res.data);
+      setCommentText("");
+      toast.success("Discussion point registered.");
+    } catch (err: any) {
+      toast.error("Failed to commit discussion.");
+    } finally {
+      setAddingComment(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -131,25 +148,27 @@ export default function ViewTaskDetail() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
-      <div className="flex items-center gap-4">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={() => navigate("/tasks")}
-          className="rounded-full hover:bg-muted/50"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <div className="flex-1">
-          <PageHeader 
-            title="Industrial Observation" 
-            subtitle={`Oversight of initiative: ${task.title}.`}
-          />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-start md:items-center gap-4 flex-1">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => navigate("/tasks")}
+            className="rounded-full hover:bg-muted/50 shrink-0 h-11 w-11"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div className="flex-1">
+            <PageHeader 
+              title="Industrial Observation" 
+              subtitle={`Oversight of initiative: ${task.title}.`}
+            />
+          </div>
         </div>
         {hasPermission("TASK", "UPDATE") && (
           <Button 
             onClick={() => navigate(`/tasks/edit/${task._id}`)}
-            className="h-10 gap-2 bg-foreground text-background font-black text-xs uppercase tracking-widest rounded-full hover:scale-105 transition-all px-6 shadow-xl shadow-foreground/5 transition-all"
+            className="h-10 gap-2 bg-foreground text-background font-black text-xs uppercase tracking-widest rounded-full hover:scale-105 px-6 shadow-xl shadow-foreground/5 transition-all w-full md:w-auto"
           >
             <Edit2 className="h-3.5 w-3.5" /> Modify Registry
           </Button>

@@ -48,4 +48,36 @@ export const API = {
     DELETE: (id: string) => `/cases/${id}`,
     ADD_HEARING: (id: string) => `/cases/${id}/hearings`,
   },
+
+  // ── Tasks ──────────────────────────────────────────────
+  TASKS: {
+    LIST: "/tasks",
+    CREATE: "/tasks",
+    GET: (id: string) => `/tasks/${id}`,
+    UPDATE: (id: string) => `/tasks/${id}`,
+    DELETE: (id: string) => `/tasks/${id}`,
+    ADD_COMMENT: (id: string) => `/tasks/${id}/comments`,
+  },
+
+  // ── Roles & Permissions ────────────────────────────────
+  ROLES: {
+    LIST: "/roles",
+    CREATE: "/roles",
+    UPDATE: (id: string) => `/roles/${id}`,
+    DELETE: (id: string) => `/roles/${id}`,
+  },
+
+  // ── Registry ──────────────────────────────────────────
+  REGISTRY: {
+    LIST: (category: string) => `/registry/${category}`,
+    CREATE: "/registry",
+    UPDATE: (id: string) => `/registry/${id}`,
+    DELETE: (id: string) => `/registry/${id}`,
+  },
+
+  // ── Search & Calendar ────────────────────────────────
+  SEARCH: "/search",
+  CALENDAR: {
+    EVENTS: "/calendar/events",
+  },
 } as const;

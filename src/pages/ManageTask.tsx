@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
-import { createTask, updateTask, getTasks } from "@/services/task.service";
+import { createTask, updateTask, getTaskById } from "@/services/task.service";
 import { getTeamMembers, type TeamMember } from "@/services/team.service";
 import { 
   Select, 
@@ -57,8 +57,9 @@ export default function ManageTask() {
         setTeam(teamRes.data.filter((m: any) => m.role !== "CLIENT"));
 
         if (isEdit) {
-          const tasksRes = await getTasks();
-          const task = tasksRes.data.find((t: any) => t._id === id);
+          const taskRes = await getTaskById(id!);
+          const task = taskRes.data;
+          
           if (task) {
             setFormData({
               title: task.title,
@@ -74,7 +75,8 @@ export default function ManageTask() {
           }
         }
       } catch (err) {
-        toast.error("Industrial synchronization error.");
+        toast.error(isEdit ? "Failed to retrieve task registry." : "Industrial synchronization error.");
+        if (isEdit) navigate("/tasks");
       } finally {
         setLoading(false);
       }

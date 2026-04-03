@@ -16,6 +16,7 @@ import { UserRole } from "@/types/auth";
 interface VerifyOtpPayload {
   email: string;
   otp: string;
+  role?: UserRole;
 }
 
 export default function VerifyResetOtpPage() {
@@ -24,10 +25,10 @@ export default function VerifyResetOtpPage() {
   const [loading, setLoading] = useState(false);
 
   const passedEmail = location.state?.email || "";
-  const role = location.state?.role || null;
+  const passedRole = (location.state?.role as UserRole) || undefined;
 
-  const formik = useFormik<VerifyOtpPayload & { role?: UserRole }>({
-    initialValues: { email: passedEmail, otp: "", role: role as UserRole },
+  const formik = useFormik<VerifyOtpPayload>({
+    initialValues: { email: passedEmail, otp: "", role: passedRole },
     validationSchema: verifyOtpSchema,
     onSubmit: async (values) => {
       try {

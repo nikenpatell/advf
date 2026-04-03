@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -22,27 +23,78 @@ import {
   Plus,
   CheckCircle2,
   Clock,
-  ShieldCheck
+  ShieldCheck,
+  FileText
 } from "lucide-react";
 import { usePermission } from "@/hooks/usePermission";
+import { getCases } from "@/services/case.service";
+import { getTasks } from "@/services/task.service";
+import { getTeamMembers } from "@/services/team.service";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { hasPermission } = usePermission();
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState({
+    caseCount: 0,
+    clientCount: 0,
+    taskCount: 1,
+    teamSize: 0,
+    recentCases: [] as any[],
+  });
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const [casesRes, tasksRes, clientsRes, teamRes] = await Promise.all([
+          getCases(),
+          getTasks(),
+          getTeamMembers("CLIENT"),
+          getTeamMembers()
+        ]);
+
+        setData({
+          caseCount: casesRes.data.length,
+          taskCount: tasksRes.data.filter(t => t.status !== "COMPLETED").length,
+          clientCount: clientsRes.data.length,
+          teamSize: teamRes.data.filter(m => m.role !== "CLIENT").length,
+          recentCases: casesRes.data.slice(0, 5),
+        });
+      } catch (err) {
+        console.error("Dashboard synchronization failure:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDashboardData();
+  }, []);
   
   const STATS = [
-    { label: "Case Load", value: "124", change: "+5.2%", trend: "up", description: "Active litigations", permission: { module: "CASE", action: "VIEW" } },
-    { label: "Stakeholders", value: "842", change: "+12%", trend: "up", description: "Registered entity count", permission: { module: "CLIENT", action: "VIEW" } },
-    { label: "Active Tasks", value: "45", change: "-20%", trend: "down", description: "Initiatives in-progress", permission: { module: "TASK", action: "VIEW" } },
-    { label: "Team Velocity", value: "94%", change: "+2.5%", trend: "up", description: "Resource utilization", permission: { module: "TEAM", action: "VIEW" } },
+    { label: "Case Load", value: data.caseCount.toString(), change: "+2.1%", trend: "up", description: "Active litigations", permission: { module: "CASE", action: "VIEW" } },
+    { label: "Stakeholders", value: data.clientCount.toString(), change: "+5%", trend: "up", description: "Registered entity count", permission: { module: "CLIENT", action: "VIEW" } },
+    { label: "Active Tasks", value: data.taskCount.toString(), change: "-10%", trend: "down", description: "Initiatives in-progress", permission: { module: "TASK", action: "VIEW" } },
+    { label: "Personnel", value: data.teamSize.toString(), change: "+0%", trend: "up", description: "Resource utilization", permission: { module: "TEAM", action: "VIEW" } },
   ];
 
-  const DOCUMENTS = [
-    { name: "Legal Brief #401", type: "Draft", status: "In Process", target: 18, limit: 5, reviewer: "Eddie Lake" },
-    { name: "Evidence Log", type: "Exhibit", status: "Done", target: 29, reviewer: "Eddie Lake" },
-    { name: "Firm Policy", type: "Internal", status: "Done", target: 10, limit: 13, reviewer: "Eddie Lake" },
-    { name: "Settlement Agreement", type: "Final", status: "Done", target: 27, limit: 23, reviewer: "Jamik Tashpulatov" },
-    { name: "Trial Transcript", type: "Archive", status: "In Process", target: 2, limit: 16, reviewer: "Jamik Tashpulatov" },
-  ];
+  if (loading) {
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i} className="rounded-2xl border border-border/40">
+               <CardHeader className="pb-2"><Skeleton className="h-4 w-24" /></CardHeader>
+               <CardContent><Skeleton className="h-10 w-16" /><Skeleton className="h-3 w-32 mt-2" /></CardContent>
+            </Card>
+          ))}
+        </div>
+        <Skeleton className="h-[400px] w-full rounded-[32px]" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -76,7 +128,7 @@ export default function Dashboard() {
       </div>
 
       <Card className="rounded-[32px] shadow-2xl shadow-primary/5 bg-background/50 backdrop-blur-xl border border-border/40 overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between p-8">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 sm:p-8 gap-4">
           <div>
             <CardTitle className="text-xl font-black text-foreground tracking-tight">Industrial Activity Stream</CardTitle>
             <CardDescription className="text-xs uppercase font-bold tracking-widest opacity-60">Real-time workstation orchestration overview</CardDescription>
@@ -103,8 +155,8 @@ export default function Dashboard() {
       </Card>
 
       <div className="flex flex-col gap-6">
-        <div className="flex items-center justify-between">
-           <div className="flex items-center bg-muted/40 p-1 rounded-full gap-1 border border-border/20">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+           <div className="flex items-center bg-muted/40 p-1 rounded-full gap-1 border border-border/20 w-fit">
              <Button variant="ghost" size="sm" className="h-8 text-[10px] bg-background shadow-sm font-black uppercase tracking-widest rounded-full px-4">Active Files</Button>
              <Button variant="ghost" size="sm" className="h-8 text-[10px] text-muted-foreground font-black uppercase tracking-widest rounded-full px-4">Past Registry</Button>
            </div>
@@ -114,7 +166,7 @@ export default function Dashboard() {
                  <Columns className="h-3.5 w-3.5" /> Registry Meta
               </Button>
               {hasPermission("CASE", "CREATE") && (
-                <Button size="sm" className="h-10 gap-2 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-lg shadow-primary/10 px-6">
+                <Button onClick={() => navigate("/cases/create")} size="sm" className="h-10 gap-2 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-lg shadow-primary/10 px-6">
                    <Plus className="h-3.5 w-3.5" /> Initialize Case
                 </Button>
               )}
@@ -122,34 +174,40 @@ export default function Dashboard() {
         </div>
 
         <Card className="rounded-[32px] shadow-2xl shadow-primary/5 bg-background/50 backdrop-blur-xl border border-border/40 overflow-hidden">
-          <Table>
-            <TableHeader className="bg-muted/30">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-muted/30">
               <TableRow className="border-border/20 hover:bg-transparent">
                 <TableHead className="w-12 text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">ID</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Entity Mapping</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Asset Class</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Litigation Identity</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Category</TableHead>
                 <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Registry State</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Objective</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Personnel</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Initialized</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Assigned Counsel</TableHead>
                 <TableHead className="w-12"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {DOCUMENTS.map((doc, i) => (
-                <TableRow key={i} className="border-border/20 group hover:bg-primary/5 transition-colors">
+              {data.recentCases.map((c, i) => (
+                <TableRow key={c._id} className="border-border/20 group hover:bg-primary/5 transition-colors cursor-pointer" onClick={() => navigate(`/cases/view/${c._id}`)}>
                   <TableCell className="text-center font-black text-xs text-muted-foreground">{i + 1}</TableCell>
-                  <TableCell className="font-black text-sm tracking-tight text-foreground">{doc.name}</TableCell>
+                  <TableCell className="font-black text-sm tracking-tight text-foreground">
+                     <div className="flex flex-col">
+                        <span>{c.title}</span>
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-widest opacity-60">#{c.caseNumber}</span>
+                     </div>
+                  </TableCell>
                   <TableCell>
-                     <Badge variant="outline" className="rounded-lg font-black text-[10px] uppercase tracking-tighter h-6 border-primary/20 text-primary bg-primary/5">{doc.type}</Badge>
+                     <Badge variant="outline" className="rounded-lg font-black text-[10px] uppercase tracking-tighter h-6 border-primary/20 text-primary bg-primary/5">{c.caseType?.title || "Litigation"}</Badge>
                   </TableCell>
                   <TableCell>
                      <div className="flex items-center gap-2">
-                        {doc.status === "Done" ? <CheckCircle2 className="h-4 w-4 text-emerald-500 scale-110" /> : <Clock className="h-4 w-4 text-orange-500 animate-spin-slow" />}
-                        <span className={`text-[12px] font-black uppercase tracking-tighter ${doc.status === "Done" ? "text-emerald-600" : "text-muted-foreground"}`}>{doc.status}</span>
+                        {c.status === "CLOSED" ? <CheckCircle2 className="h-4 w-4 text-emerald-500 scale-110" /> : <Clock className="h-4 w-4 text-orange-500" />}
+                        <span className={`text-[12px] font-black uppercase tracking-tighter ${c.status === "CLOSED" ? "text-emerald-600" : "text-muted-foreground"}`}>{c.status}</span>
                      </div>
                   </TableCell>
-                  <TableCell className="font-black text-xs text-foreground/80">{doc.target}k points</TableCell>
-                  <TableCell className="font-black text-xs text-foreground/80">{doc.reviewer}</TableCell>
+                  <TableCell className="font-black text-xs text-foreground/80">{format(new Date(c.createdAt), "dd MMM yy")}</TableCell>
+                  <TableCell className="font-black text-xs text-foreground/80">{c.assignedTo?.name || "Unassigned"}</TableCell>
                   <TableCell>
                     <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary text-primary hover:text-white">
                        <ArrowUpRight className="h-4 w-4" />
@@ -157,8 +215,19 @@ export default function Dashboard() {
                   </TableCell>
                 </TableRow>
               ))}
+              {data.recentCases.length === 0 && (
+                <TableRow>
+                   <TableCell colSpan={7} className="h-32 text-center">
+                      <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                         <FileText className="h-8 w-8 opacity-20" />
+                         <span className="text-xs font-black uppercase tracking-widest">No recent litigation activity</span>
+                      </div>
+                   </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
+          </div>
         </Card>
       </div>
     </div>

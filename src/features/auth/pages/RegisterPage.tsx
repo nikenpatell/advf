@@ -28,7 +28,7 @@ export default function RegisterPage() {
         const { confirmPassword, ...payload } = values;
         const res = await register(payload);
         toast.success(res.message);
-        navigate(ROUTES.VERIFY_OTP, { state: { email: values.email } });
+        navigate(ROUTES.VERIFY_OTP, { state: { email: values.email, role: "ORG_ADMIN" } });
       } catch (err: unknown) {
         handleError(err);
       } finally {

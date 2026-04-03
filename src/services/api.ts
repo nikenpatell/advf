@@ -43,12 +43,16 @@ api.interceptors.response.use(
     const status = error?.response?.status;
     const originalRequest = error?.config;
 
-    // Skip auto-redirect for specific auth verification routes to allow retry logic on-page
-    const isVerifyRoute = originalRequest.url?.includes("/auth/verify-otp") || 
-                         originalRequest.url?.includes("/auth/verify-reset-otp");
+    // Skip auto-redirect for specific auth routes to allow retry logic on-page without full reload
+    const isPublicAuthRoute = 
+      originalRequest.url?.includes("/auth/login") || 
+      originalRequest.url?.includes("/auth/register") || 
+      originalRequest.url?.includes("/auth/verify-otp") || 
+      originalRequest.url?.includes("/auth/verify-reset-otp") ||
+      originalRequest.url?.includes("/auth/get-roles-by-email");
 
     // Auto refresh token on 401
-    if (status === 401 && !originalRequest._retry && !isVerifyRoute) {
+    if (status === 401 && !originalRequest._retry && !isPublicAuthRoute) {
       originalRequest._retry = true;
       const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
 

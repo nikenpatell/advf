@@ -1,4 +1,5 @@
 import api from "./api";
+import { API } from "./endpoints";
 
 export interface CalendarEvent {
   id: string;
@@ -12,6 +13,6 @@ export interface CalendarEvent {
 }
 
 export const getCalendarEvents = async () => {
-  const response = await api.get<{ data: CalendarEvent[] }>("/calendar/events");
+  const response = await api.get<{ data: CalendarEvent[] }>(API.CALENDAR.EVENTS);
   return response.data;
 };

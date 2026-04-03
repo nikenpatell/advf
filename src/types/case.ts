@@ -32,6 +32,7 @@ export interface CaseItem {
   createdBy: string;
   hearings: HearingHistory[];
   history: CaseHistory[];
+  comments?: { _id: string; author: { _id: string; name: string; email: string }; text: string; createdAt: string; }[];
   createdAt: string;
   updatedAt: string;
 }

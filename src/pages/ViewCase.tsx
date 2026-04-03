@@ -14,12 +14,15 @@ import {
   History,
   Mail,
   Phone,
-  Calendar as CalendarIcon
+  Calendar as CalendarIcon,
+  MessageSquare,
+  Send
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import toast from "react-hot-toast";
-import { getCaseById, addHearing } from "@/services/case.service";
+import { getCaseById, addHearing, addCaseComment } from "@/services/case.service";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { CaseItem } from "@/types/case";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -44,6 +47,10 @@ export default function ViewCase() {
   const [addingHearing, setAddingHearing] = useState(false);
   const [hearingForm, setHearingForm] = useState({ hearingDate: "", notes: "" });
   const [savingHearing, setSavingHearing] = useState(false);
+
+  // Comment State
+  const [commentText, setCommentText] = useState("");
+  const [addingComment, setAddingComment] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
@@ -76,6 +83,22 @@ export default function ViewCase() {
       toast.error("Log orchestration failed.");
     } finally {
       setSavingHearing(false);
+    }
+  };
+
+  const handleAddComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+    try {
+      setAddingComment(true);
+      const res = await addCaseComment(id!, commentText);
+      setCaseData(res.data);
+      setCommentText("");
+      toast.success("Discussion point registered.");
+    } catch (err: any) {
+      toast.error("Failed to commit discussion.");
+    } finally {
+      setAddingComment(false);
     }
   };
 
@@ -115,18 +138,20 @@ export default function ViewCase() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/cases")} className="rounded-full hover:bg-muted/50 h-11 w-11 shadow-none transition-colors">
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <div className="flex-1">
-          <PageHeader 
-            title="Litigation Portfolio" 
-            subtitle={`Industrial oversight of Case #${caseData.caseNumber} • ${caseData.title}.`}
-          />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-start md:items-center gap-4 flex-1">
+          <Button variant="ghost" size="icon" onClick={() => navigate("/cases")} className="rounded-full hover:bg-muted/50 h-11 w-11 shrink-0 shadow-none transition-colors">
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div className="flex-1">
+            <PageHeader 
+              title="Litigation Portfolio" 
+              subtitle={`Industrial oversight of Case #${caseData.caseNumber} • ${caseData.title}.`}
+            />
+          </div>
         </div>
         {hasPermission("CASE", "UPDATE") && (
-          <Button onClick={() => navigate(`/cases/edit/${caseData._id}`)} className="h-11 gap-2 bg-foreground text-background font-black text-xs uppercase tracking-widest rounded-full hover:scale-105 transition-all px-6 shadow-xl">
+          <Button onClick={() => navigate(`/cases/edit/${caseData._id}`)} className="h-11 gap-2 bg-foreground text-background font-black text-xs uppercase tracking-widest rounded-full hover:scale-105 transition-all w-full md:w-auto px-6 shadow-xl">
             <Edit2 className="h-3.5 w-3.5" /> Modify Registry
           </Button>
         )}
@@ -142,7 +167,7 @@ export default function ViewCase() {
                 <h1 className="text-3xl font-black text-foreground tracking-tight">{caseData.title}</h1>
              </div>
              <CardContent className="p-10 space-y-12">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
                    <div className="space-y-2">
                       <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block pl-0.5">Context Stage</span>
                       <div className="flex items-center gap-2">
@@ -270,6 +295,52 @@ export default function ViewCase() {
                    </div>
                 </div>
              </CardContent>
+          </Card>
+
+          <Card className="border-none shadow-2xl shadow-primary/5 bg-background/50 backdrop-blur-xl rounded-[40px] border border-border/40 mt-8">
+            <CardHeader className="p-10 pb-4">
+               <div className="flex items-center gap-2">
+                 <MessageSquare className="h-5 w-5 text-primary" />
+                 <CardTitle className="text-xl font-black text-foreground">Litigation Discussion</CardTitle>
+               </div>
+            </CardHeader>
+            <CardContent className="p-10 pt-4 space-y-8">
+               <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                  {(caseData.comments || []).length === 0 ? (
+                     <div className="text-center py-6 opacity-40">
+                       <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                       <span className="text-[10px] uppercase font-black tracking-widest block">No discussions recorded</span>
+                     </div>
+                  ) : (
+                    (caseData.comments || []).map(comment => (
+                      <div key={comment._id} className="flex gap-4 p-4 rounded-3xl bg-muted/20 border border-border/40">
+                         <Avatar className="h-10 w-10 shrink-0 border-2 border-background ring-2 ring-primary/10 shadow-sm rounded-xl">
+                            <AvatarFallback className="bg-primary/10 text-primary font-black text-xs">{comment.author.name.charAt(0)}</AvatarFallback>
+                         </Avatar>
+                         <div className="flex-1 space-y-1">
+                            <div className="flex items-center justify-between">
+                               <span className="text-xs font-black text-foreground">{comment.author.name}</span>
+                               <span className="text-[9px] font-bold text-muted-foreground">{format(new Date(comment.createdAt), "dd MMM · HH:mm")}</span>
+                            </div>
+                            <p className="text-[13px] leading-relaxed text-muted-foreground/90">{comment.text}</p>
+                         </div>
+                      </div>
+                    ))
+                  )}
+               </div>
+
+               <form onSubmit={handleAddComment} className="flex gap-3 pt-4 border-t border-border/20">
+                  <Input 
+                     placeholder="Add to industrial discussion..." 
+                     value={commentText}
+                     onChange={e => setCommentText(e.target.value)}
+                     className="h-12 rounded-2xl bg-muted/10 border-border/40 focus:border-primary/50 text-[13px] px-4"
+                  />
+                  <Button type="submit" disabled={addingComment || !commentText.trim()} className="h-12 w-12 rounded-2xl bg-primary text-primary-foreground shrink-0 shadow-lg flex items-center justify-center p-0">
+                     {addingComment ? <div className="h-4 w-4 animate-spin border-2 border-background border-t-transparent rounded-full" /> : <Send className="h-4 w-4" />}
+                  </Button>
+               </form>
+            </CardContent>
           </Card>
         </div>
 
