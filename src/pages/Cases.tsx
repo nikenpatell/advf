@@ -83,11 +83,11 @@ export default function Cases() {
 
   const columns = [
     { header: "#", width: "60px", className: "text-center" },
-    { header: "Litigation Identity", width: "340px" },
-    { header: "Client Stakeholder" },
-    { header: "Jurisdiction" },
-    { header: "Lifecycle Stage" },
-    { header: "Next Event" },
+    { header: "Case Title", width: "340px" },
+    { header: "Client Name" },
+    { header: "Court Name" },
+    { header: "Case Stage" },
+    { header: "Next Hearing" },
     { header: "Management", className: "w-[160px] text-right" }
   ];
 
@@ -95,13 +95,13 @@ export default function Cases() {
     <div className="space-y-6 animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <PageHeader 
-          title="Litigation Portfolio" 
-          subtitle={`Industrial oversight of active legal cases for ${currentOrg?.name || 'Workspace'}.`}
+          title="Cases" 
+          subtitle={`Manage active legal cases for ${currentOrg?.name || 'Workspace'}.`}
         />
         {hasPermission("CASE", "CREATE") && (
           <Button onClick={() => navigate("/cases/create")} className="h-10 gap-2 bg-primary text-primary-foreground hover:bg-primary/90 font-black text-xs uppercase tracking-widest rounded-full px-6 shadow-lg shadow-primary/10 transition-all hover:scale-[1.02]">
             <Plus className="h-4 w-4" />
-            Initialize Case
+            Add Case
           </Button>
         )}
       </div>
@@ -110,14 +110,14 @@ export default function Cases() {
         <div className="relative flex-1 group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
           <Input 
-            placeholder="Search by Title, Number or Client Identity..." 
+            placeholder="Search by Title, Number or Client..." 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="h-12 pl-12 rounded-2xl bg-muted/20 border-border/40 focus:bg-background transition-all"
           />
         </div>
         <Button variant="outline" className="h-12 px-6 rounded-2xl border-border/40 gap-2 font-bold text-xs uppercase tracking-widest bg-muted/10">
-          <Filter className="h-4 w-4" /> Filter Portfolio
+          <Filter className="h-4 w-4" /> Filter Cases
         </Button>
       </div>
 
@@ -125,7 +125,7 @@ export default function Cases() {
         columns={columns} 
         loading={loading} 
         empty={filteredCases.length === 0}
-        emptyMessage="Registry Empty. Your Litigation workstation is currently clear of any active records."
+        emptyMessage="No cases found."
       >
         {filteredCases.map((c, index) => (
           <DataTableRow key={c._id}>
@@ -152,14 +152,14 @@ export default function Cases() {
                 </div>
                 <div className="flex flex-col">
                    <span className="text-[13px] font-black text-foreground/90">{c.clientId.name}</span>
-                   <span className="text-[9px] font-bold uppercase tracking-tighter text-muted-foreground opacity-50">Client Identity</span>
+                   <span className="text-[9px] font-bold uppercase tracking-tighter text-muted-foreground opacity-50">Client</span>
                 </div>
               </div>
             </DataTableCell>
             <DataTableCell>
                <div className="space-y-1 text-left">
                   <span className="text-[13px] font-bold text-foreground/80 flex items-center gap-2 italic tracking-tight">{c.courtName}</span>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 block">Judicial Registry</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 block">Court</span>
                </div>
             </DataTableCell>
             <DataTableCell>
@@ -177,12 +177,12 @@ export default function Cases() {
                      <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                      <span className="text-[13px] font-black text-foreground">{format(new Date(c.nextHearingDate), "MMM d, yyyy")}</span>
                    </div>
-                   <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/50 pl-3.5 italic">Scheduled Call</span>
+                   <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/50 pl-3.5 italic">Hearing Date</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-2 opacity-30grayscale text-left">
                    <Clock className="h-3 w-3 text-muted-foreground" />
-                   <span className="text-[10px] uppercase font-black text-muted-foreground/60 tracking-[0.15em]">Pending Log</span>
+                   <span className="text-[10px] uppercase font-black text-muted-foreground/60 tracking-[0.15em]">Not Scheduled</span>
                 </div>
               )}
             </DataTableCell>

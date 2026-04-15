@@ -60,11 +60,11 @@ export default function ManageType() {
               isPrime: item.isPrime
             });
           } else {
-            toast.error("Registry entry not found");
+            toast.error("Item not found");
             navigate("/type-management");
           }
         } catch (err) {
-          toast.error("Failed to synchronize registry data");
+          toast.error("Failed to load details");
         } finally {
           setLoading(false);
         }
@@ -88,7 +88,7 @@ export default function ManageType() {
       }
       navigate(`/type-management?category=${category}`);
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Registry update failed");
+      toast.error(err.response?.data?.message || "Save failed");
     } finally {
       setSaving(false);
     }
@@ -145,8 +145,8 @@ export default function ManageType() {
         </Button>
         <div className="flex-1">
           <PageHeader 
-            title={isEdit ? "Edit Registry Entry" : "Add New Classification"} 
-            subtitle={`Configuring parameters for the ${CATEGORY_LABELS[category] || category} registry.`}
+            title={isEdit ? "Edit Item" : "Add New Item"} 
+            subtitle={`Managing details for ${CATEGORY_LABELS[category] || category}.`}
           />
         </div>
       </div>
@@ -160,14 +160,14 @@ export default function ManageType() {
                      <Settings2 className="h-5 w-5" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl font-bold tracking-tight">Registry Configuration</CardTitle>
-                    <CardDescription className="text-[11px] font-medium uppercase tracking-tighter text-muted-foreground">Industrial Orchestration</CardDescription>
+                    <CardTitle className="text-xl font-bold tracking-tight">Details</CardTitle>
+                    <CardDescription className="text-[11px] font-medium uppercase tracking-tighter text-muted-foreground">Configuration</CardDescription>
                   </div>
                </div>
             </CardHeader>
             <CardContent className="p-8 space-y-8">
               <div className="space-y-3">
-                <Label htmlFor="type-title" className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Type Title / Designation</Label>
+                <Label htmlFor="type-title" className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Title</Label>
                 <Input 
                   id="type-title"
                   placeholder={`e.g. Criminal, Civil, Fast Track...`} 
@@ -178,7 +178,7 @@ export default function ManageType() {
                 />
                 <div className="flex items-start gap-2 pl-1 opacity-60">
                    <Info className="h-3 w-3 mt-0.5 text-primary" />
-                   <p className="text-[10px] text-muted-foreground">The label that will be displayed in dropdowns and dashboards throughout the platform workstation.</p>
+                   <p className="text-[10px] text-muted-foreground">The label that will be displayed in dropdowns and lists throughout the application.</p>
                 </div>
               </div>
 
@@ -186,7 +186,7 @@ export default function ManageType() {
                  <div className={cn("p-5 rounded-3xl border transition-all flex items-center justify-between group", formData.isLive ? "border-primary/20 bg-primary/5" : "border-border/40 bg-muted/5")}>
                     <div className="flex flex-col gap-0.5">
                        <span className={cn("text-xs font-black uppercase tracking-wide", formData.isLive ? "text-primary" : "text-foreground")}>Active Status</span>
-                       <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest leading-none">Global Visibility</span>
+                       <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest leading-none">Show in the app</span>
                     </div>
                     <Switch checked={formData.isLive} onCheckedChange={(v: boolean) => setFormData({...formData, isLive: v})} />
                  </div>
@@ -209,16 +209,16 @@ export default function ManageType() {
            <Card className="border-none shadow-2xl shadow-primary/5 bg-background/50 backdrop-blur-xl rounded-[32px] border border-border/40 overflow-hidden">
               <CardHeader className="p-8 pb-4">
                  <CardTitle className="text-lg font-bold flex items-center gap-2">
-                    <Shield className="h-5 w-5 text-primary" /> State Actions
+                    <Shield className="h-5 w-5 text-primary" /> Actions
                  </CardTitle>
               </CardHeader>
               <CardContent className="p-8 pt-0 space-y-6">
                  <div className="p-6 rounded-3xl bg-muted/10 border border-border/20 text-center space-y-3">
                     <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest leading-relaxed">
-                       Registry Context: {CATEGORY_LABELS[category] || category}
+                       Category Context: {CATEGORY_LABELS[category] || category}
                     </p>
                     <p className="text-[9px] text-muted-foreground/60">
-                       Changes will affects all active modules utilizing this classification.
+                       Changes will affect everywhere this is used.
                     </p>
                  </div>
 
@@ -234,7 +234,7 @@ export default function ManageType() {
                       ) : (
                         <span className="flex items-center gap-2">
                           <Save className="h-4 w-4" /> 
-                          {isEdit ? "Update Registry" : "Save Entry"}
+                          {isEdit ? "Save Changes" : "Save Item"}
                         </span>
                       )}
                     </Button>
@@ -254,10 +254,10 @@ export default function ManageType() {
               <CardContent className="p-6 space-y-4">
                  <div className="flex items-center gap-3 text-muted-foreground">
                     <Shield className="h-4 w-4" />
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-center">Governance Notice</span>
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-center">Audit Notice</span>
                  </div>
                  <p className="text-[10px] text-muted-foreground/60 leading-relaxed text-center">
-                    This modification will be logged in the workstation audit trail. System-wide synchronization is initiated upon save.
+                    Changes to this item will apply globally across the app.
                  </p>
               </CardContent>
            </Card>

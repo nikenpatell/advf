@@ -15,7 +15,8 @@ import {
   Briefcase,
   ShieldCheck,
   History,
-  Scale
+  Scale,
+  Users
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -133,13 +134,18 @@ export default function ViewClient() {
                 </Avatar>
                 <div className="mt-6 flex flex-col items-center">
                    <h2 className="text-2xl font-black tracking-tight text-foreground">{client.name}</h2>
-                   <div className="mt-3 flex items-center gap-2">
+                   <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
                       <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border-primary/20 text-primary bg-primary/5">
                         {client.role}
                       </Badge>
                       <Badge variant={client.isVerified ? "success" : "warning"} className="text-[10px] h-6 px-3 rounded-full">
                         {client.isVerified ? "Verified" : "Unverified"}
                       </Badge>
+                      {client.clientRole && client.clientRole !== "none" && (
+                        <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border-purple-500/20 text-purple-500 bg-purple-500/5 flex items-center gap-1">
+                          <Users className="h-2.5 w-2.5" />{client.clientRole}
+                        </Badge>
+                      )}
                    </div>
                    <div className="mt-8 grid grid-cols-2 gap-4 w-full">
                       <div className="p-4 rounded-3xl bg-muted/20 border border-border/10 text-center">
@@ -182,6 +188,17 @@ export default function ViewClient() {
                         <span className="text-sm font-bold text-foreground">{client.contactNumber || "Undefined"}</span>
                       </div>
                    </div>
+                   {client.clientRole && client.clientRole !== "none" && (
+                     <div className="flex items-center gap-4 group">
+                        <div className="h-10 w-10 flex items-center justify-center rounded-2xl bg-background border border-border/20 group-hover:border-purple-500/40 transition-colors shadow-sm">
+                          <Users className="h-4 w-4 text-purple-500" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Client Role</span>
+                          <span className="text-sm font-bold text-foreground uppercase">{client.clientRole}</span>
+                        </div>
+                     </div>
+                   )}
                 </div>
              </CardContent>
           </Card>

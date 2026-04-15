@@ -11,6 +11,8 @@ export interface TeamMember {
   role: string;
   customRoleId?: string;
   customRoleName?: string;
+  clientRoleId?: string;
+  clientRole?: string;
   status: string;
   joinedAt: string;
 }
@@ -22,6 +24,7 @@ export interface CreateMemberPayload {
   contactNumber: string;
   role: string;
   customRoleId?: string;
+  clientRoleId?: string;
 }
 
 export const getTeamMembers = async (role?: string) => {

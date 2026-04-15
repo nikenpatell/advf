@@ -72,7 +72,7 @@ export default function ManageCase() {
         ]);
         
         setClients(clientsRes.data);
-        setLawyers(teamRes.data.filter(m => m.role !== "CLIENT"));
+        setLawyers(teamRes.data.filter(m => m.role !== "CLIENT" && m.status !== "INACTIVE" && (m.isVerified === true || m.status === "ACTIVE")));
         setCaseTypes(typesRes.data);
         setCaseStages(stagesRes.data);
 
@@ -152,8 +152,8 @@ export default function ManageCase() {
         </Button>
         <div className="flex-1">
           <PageHeader 
-            title={isEdit ? "Edit Litigation Record" : "Initialize New Case"} 
-            subtitle={isEdit ? `Modifying industrial registry for Case #${formData.caseNumber}.` : "Registering a new legal matter for workspace management."}
+            title={isEdit ? "Edit Case" : "Add New Case"} 
+            subtitle={isEdit ? `Updating details for Case #${formData.caseNumber}.` : "Add a new legal case to your workspace."}
           />
         </div>
       </div>
@@ -163,9 +163,9 @@ export default function ManageCase() {
           <Card className="border-none shadow-2xl shadow-primary/5 bg-background/50 backdrop-blur-xl rounded-[32px] border border-border/40 overflow-hidden">
             <CardHeader className="p-8 pb-4">
                <CardTitle className="text-lg font-black flex items-center gap-2">
-                  <Scale className="h-5 w-5 text-primary" /> Core Case Identity
+                  <Scale className="h-5 w-5 text-primary" /> Case Details
                </CardTitle>
-               <CardDescription className="text-xs uppercase font-bold tracking-widest text-muted-foreground/60">Registry Parameters</CardDescription>
+               <CardDescription className="text-xs uppercase font-bold tracking-widest text-muted-foreground/60">Basic Information</CardDescription>
             </CardHeader>
             <CardContent className="p-8 pt-0 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -180,7 +180,7 @@ export default function ManageCase() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Litigation Title</Label>
+                  <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Case Title</Label>
                   <Input 
                     placeholder="e.g. John Doe vs State" 
                     value={formData.title} 
@@ -193,7 +193,7 @@ export default function ManageCase() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                  <div className="space-y-2">
-                    <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Category Type</Label>
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Case Category</Label>
                     <Select value={formData.caseType} onValueChange={(v) => setFormData({...formData, caseType: v})} required>
                        <SelectTrigger className="h-12 rounded-2xl bg-muted/10 border-border/40">
                           <SelectValue placeholder="Select Type" />
@@ -206,7 +206,7 @@ export default function ManageCase() {
                     </Select>
                  </div>
                  <div className="space-y-2">
-                    <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Registry Stage</Label>
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Case Stage</Label>
                     <Select value={formData.stage} onValueChange={(v) => setFormData({...formData, stage: v})} required>
                        <SelectTrigger className="h-12 rounded-2xl bg-muted/10 border-border/40">
                           <SelectValue placeholder="Select Stage" />
@@ -219,7 +219,7 @@ export default function ManageCase() {
                     </Select>
                  </div>
                  <div className="space-y-2">
-                    <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Initiation Date</Label>
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Filing Date</Label>
                     <Popover>
                        <PopoverTrigger asChild>
                           <Button variant="outline" className={cn("w-full h-12 justify-start text-left font-normal rounded-2xl bg-muted/10 border-border/40", !formData.caseDate && "text-muted-foreground")}>
@@ -235,7 +235,7 @@ export default function ManageCase() {
               </div>
 
               <div className="space-y-2">
-                 <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Court Jurisdiction</Label>
+                 <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Court Name</Label>
                  <Input 
                    value={formData.courtName} 
                    onChange={(e) => setFormData({...formData, courtName: e.target.value})} 
@@ -249,15 +249,15 @@ export default function ManageCase() {
           <Card className="border-none shadow-2xl shadow-primary/5 bg-background/50 backdrop-blur-xl rounded-[32px] border border-border/40 overflow-hidden">
              <CardHeader className="p-8 pb-4">
                 <CardTitle className="text-lg font-black flex items-center gap-2">
-                   <Users className="h-5 w-5 text-primary" /> Stakeholders
+                   <Users className="h-5 w-5 text-primary" /> Parties Involved
                 </CardTitle>
              </CardHeader>
              <CardContent className="p-8 pt-0 space-y-8">
                 <div className="space-y-3">
-                   <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Principal Client</Label>
+                   <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Select Client</Label>
                    <Select value={formData.clientId} onValueChange={(v) => setFormData({...formData, clientId: v})} required>
                       <SelectTrigger className="h-14 rounded-2xl bg-muted/10 border-border/40 px-6">
-                         <SelectValue placeholder="Identify Client..." />
+                         <SelectValue placeholder="Select Client..." />
                       </SelectTrigger>
                       <SelectContent className="rounded-2xl border-border/40">
                          {clients.map(c => (
@@ -268,7 +268,7 @@ export default function ManageCase() {
                 </div>
 
                 <div className="space-y-4">
-                   <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Assigned Technical Council</Label>
+                   <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Assigned Lawyers</Label>
                    <Card className="border-none bg-muted/10 rounded-[28px] overflow-hidden border border-border/20">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border/20">
                          {lawyers.map(m => (
@@ -292,32 +292,32 @@ export default function ManageCase() {
            <Card className="border-none shadow-2xl shadow-primary/5 bg-background/50 backdrop-blur-xl rounded-[32px] border border-border/40 overflow-hidden">
               <CardHeader className="p-8 pb-4">
                  <CardTitle className="text-lg font-black flex items-center gap-2">
-                    <CalendarIcon className="h-5 w-5 text-primary" /> Orchestration
+                    <CalendarIcon className="h-5 w-5 text-primary" /> Management
                  </CardTitle>
               </CardHeader>
               <CardContent className="p-8 pt-0 space-y-6">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                       <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80">State Control</Label>
+                       <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80">Case Status</Label>
                        <Select value={formData.status} onValueChange={(v) => setFormData({...formData, status: v as any})}>
                           <SelectTrigger className="h-12 rounded-2xl bg-muted/10 border-border/40">
                              <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="rounded-2xl border-border/40">
-                             <SelectItem value="OPEN">Open Account</SelectItem>
-                             <SelectItem value="PENDING">Pending Registry</SelectItem>
-                             <SelectItem value="CLOSED">Closed Account</SelectItem>
+                             <SelectItem value="OPEN">Open</SelectItem>
+                             <SelectItem value="PENDING">Pending</SelectItem>
+                             <SelectItem value="CLOSED">Closed</SelectItem>
                           </SelectContent>
                        </Select>
                     </div>
 
                     <div className="space-y-2">
-                       <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 italic">Next Hearing</Label>
+                       <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 italic">Next Hearing Date</Label>
                        <Popover>
                           <PopoverTrigger asChild>
                              <Button variant="outline" className={cn("w-full h-12 justify-start text-left font-normal rounded-2xl bg-muted/10 border-border/40", !formData.nextHearingDate && "text-muted-foreground")}>
                                 <CalendarIcon className="mr-2 h-4 w-4" />
-                                {formData.nextHearingDate ? format(new Date(formData.nextHearingDate), "PPP") : <span>Identify Next Event</span>}
+                                {formData.nextHearingDate ? format(new Date(formData.nextHearingDate), "PPP") : <span>Select Date</span>}
                              </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0 rounded-3xl overflow-hidden border-border/40 shadow-2xl">
@@ -328,21 +328,21 @@ export default function ManageCase() {
 
                     {isEdit && (
                         <div className="space-y-2 pt-2 border-t border-border/10">
-                           <Label className="text-[11px] font-black uppercase tracking-widest text-primary/80">Registry Change Note</Label>
+                           <Label className="text-[11px] font-black uppercase tracking-widest text-primary/80">Update Note</Label>
                            <Input 
                               placeholder="e.g. Stage update to evidence" 
                               value={formData.changeNote}
                               onChange={(e) => setFormData({...formData, changeNote: e.target.value})}
                               className="h-12 rounded-2xl bg-primary/5 border-primary/20 focus:bg-background transition-all"
                            />
-                           <p className="text-[9px] text-muted-foreground/60 italic pl-1 font-bold">This will be chronologically logged in the Activity Ledger.</p>
+                           <p className="text-[9px] text-muted-foreground/60 italic pl-1 font-bold">This will be saved to the case history.</p>
                         </div>
                     )}
                  </div>
 
                  <div className="pt-6 space-y-4">
                     <Button type="submit" disabled={saving} className="w-full h-14 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest shadow-2xl transition-all">
-                       {saving ? "Processing..." : (isEdit ? "Update Registry" : "Execute Registration")}
+                       {saving ? "Saving..." : (isEdit ? "Save Changes" : "Save Case")}
                     </Button>
                  </div>
               </CardContent>

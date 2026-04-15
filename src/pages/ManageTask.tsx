@@ -54,7 +54,7 @@ export default function ManageTask() {
     const init = async () => {
       try {
         const teamRes = await getTeamMembers();
-        setTeam(teamRes.data.filter((m: any) => m.role !== "CLIENT"));
+        setTeam(teamRes.data.filter((m: any) => m.role !== "CLIENT" && m.status !== "INACTIVE" && (m.isVerified === true || m.status === "ACTIVE")));
 
         if (isEdit) {
           const taskRes = await getTaskById(id!);
@@ -165,8 +165,8 @@ export default function ManageTask() {
         </Button>
         <div className="flex-1">
           <PageHeader 
-            title={isEdit ? "Edit Workspace Initiative" : "Initialize New Task"} 
-            subtitle={isEdit ? `Modifying parameters for: ${formData.title}` : "Establishing a new legal objective for the workstation."}
+            title={isEdit ? "Edit Task" : "Add New Task"} 
+            subtitle={isEdit ? `Updating details for: ${formData.title}` : "Add a new task for your team."}
           />
         </div>
       </div>
@@ -176,15 +176,15 @@ export default function ManageTask() {
           <Card className="border-none shadow-2xl shadow-primary/5 bg-background/50 backdrop-blur-xl rounded-[32px] border border-border/40">
             <CardHeader className="p-8 pb-4">
               <CardTitle className="text-lg font-bold flex items-center gap-2">
-                 <FileText className="h-5 w-5 text-primary" /> Initiative Registry
+                 <FileText className="h-5 w-5 text-primary" /> Task Details
               </CardTitle>
-              <CardDescription className="text-xs">Define the core parameters and legal scope of this task.</CardDescription>
+              <CardDescription className="text-xs">Provide the basic information about this task.</CardDescription>
             </CardHeader>
             <CardContent className="p-8 pt-0 space-y-6">
               <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Initiative Title</Label>
+                <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Task Title</Label>
                 <Input 
-                  placeholder="e.g. Constitutional Review or Client Consultation..." 
+                  placeholder="e.g. Review client document..." 
                   value={formData.title} 
                   onChange={(e) => setFormData({...formData, title: e.target.value})} 
                   required
@@ -193,10 +193,10 @@ export default function ManageTask() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Legal Description (Overview)</Label>
+                <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Task Description</Label>
                 <textarea 
                   className="flex min-h-[150px] w-full rounded-2xl border border-border/40 bg-muted/5 px-4 py-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-primary focus:bg-background"
-                  placeholder="Provide industrial oversight for this task objective..."
+                  placeholder="Describe what needs to be done..."
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
                 />
@@ -204,7 +204,7 @@ export default function ManageTask() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Deadline Orchestration</Label>
+                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Due Date</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
@@ -215,7 +215,7 @@ export default function ManageTask() {
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {formData.dueDate ? format(new Date(formData.dueDate), "PPP") : <span>Pick a deadline</span>}
+                        {formData.dueDate ? format(new Date(formData.dueDate), "PPP") : <span>Select Date</span>}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0 rounded-[24px] border-border/40 shadow-2xl" align="start">
@@ -229,7 +229,7 @@ export default function ManageTask() {
                   </Popover>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Assigned Personnel</Label>
+                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Assign To</Label>
                   <Select 
                     value={formData.assignedTo || "UNASSIGNED"} 
                     onValueChange={(v) => setFormData({...formData, assignedTo: v === "UNASSIGNED" ? "" : v})}
@@ -238,7 +238,7 @@ export default function ManageTask() {
                       <SelectValue placeholder="Unassigned" />
                     </SelectTrigger>
                     <SelectContent className="rounded-2xl border-border/40">
-                      <SelectItem value="UNASSIGNED" className="font-bold text-muted-foreground" aria-label="Unassigned">Unassigned Stakeholder</SelectItem>
+                      <SelectItem value="UNASSIGNED" className="font-bold text-muted-foreground" aria-label="Unassigned">Unassigned</SelectItem>
                       {team.map(m => (
                         <SelectItem key={m.id} value={m.id}>{m.name} ({m.role.replace('_', ' ')})</SelectItem>
                       ))}
@@ -260,7 +260,7 @@ export default function ManageTask() {
               <CardContent className="p-8 pt-0 space-y-6">
                  <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Priority Weight</Label>
+                      <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Priority</Label>
                       <Select 
                         value={formData.priority} 
                         onValueChange={(v) => setFormData({...formData, priority: v as any})}
@@ -269,16 +269,16 @@ export default function ManageTask() {
                           <SelectValue placeholder="Select Status" />
                         </SelectTrigger>
                         <SelectContent className="rounded-2xl border-border/40">
-                          <SelectItem value="LOW">Low Priority</SelectItem>
-                          <SelectItem value="MEDIUM">Medium Weight</SelectItem>
-                          <SelectItem value="HIGH">High Priority</SelectItem>
-                          <SelectItem value="URGENT" className="font-bold text-destructive">Urgent (Immediate)</SelectItem>
+                          <SelectItem value="LOW">Low</SelectItem>
+                          <SelectItem value="MEDIUM">Medium</SelectItem>
+                          <SelectItem value="HIGH">High</SelectItem>
+                          <SelectItem value="URGENT" className="font-bold text-destructive">Urgent</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Workstation State</Label>
+                      <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Task Status</Label>
                       <Select 
                         value={formData.status} 
                         onValueChange={(v) => setFormData({...formData, status: v as any})}
@@ -287,10 +287,10 @@ export default function ManageTask() {
                           <SelectValue placeholder="Select Status" />
                         </SelectTrigger>
                         <SelectContent className="rounded-2xl border-border/40">
-                          <SelectItem value="PENDING">Pending (Drafts)</SelectItem>
-                          <SelectItem value="IN_PROGRESS">In Progress (Active)</SelectItem>
-                          <SelectItem value="COMPLETED">Completed (Archived)</SelectItem>
-                          <SelectItem value="ON_HOLD">On Hold (Paused)</SelectItem>
+                          <SelectItem value="PENDING">Pending</SelectItem>
+                          <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
+                          <SelectItem value="COMPLETED">Completed</SelectItem>
+                          <SelectItem value="ON_HOLD">On Hold</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -307,7 +307,7 @@ export default function ManageTask() {
                       ) : (
                         <span className="flex items-center gap-2">
                           <Save className="h-4 w-4" /> 
-                          {isEdit ? "Update Registry" : "Initialize Task"}
+                          {isEdit ? "Save Changes" : "Save Task"}
                         </span>
                       )}
                     </Button>
@@ -327,10 +327,10 @@ export default function ManageTask() {
               <CardContent className="p-6 space-y-4">
                  <div className="flex items-center gap-3 text-muted-foreground">
                     <AlertCircle className="h-4 w-4" />
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-center">Governance Notice</span>
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-center">Activity Notice</span>
                  </div>
                  <p className="text-[10px] text-muted-foreground/60 leading-relaxed text-center">
-                    Registry changes are audited in real-time. Only authorized personnel can modify critical task priorities.
+                    Changes to tasks are automatically saved to the case history log.
                  </p>
               </CardContent>
            </Card>

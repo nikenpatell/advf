@@ -128,7 +128,7 @@ export default function ManageTeamMember() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <PageHeader 
-          title={isEdit ? "Edit Personnel" : "Onboard Personnel"} 
+          title={isEdit ? "Edit Team Member" : "Add Team Member"} 
           subtitle={isEdit ? `Modifying workstation access for ${formData.name}.` : "Adding new talent to the organizational registry."}
         />
       </div>
@@ -141,7 +141,7 @@ export default function ManageTeamMember() {
                  <div className="inline-flex h-24 w-24 items-center justify-center rounded-[32px] bg-background border-4 border-background shadow-xl text-3xl font-black text-primary mb-4">
                     {formData.name.charAt(0) || <UserPlus className="h-10 w-10 opacity-20" />}
                  </div>
-                 <h3 className="text-xl font-black tracking-tight text-foreground">{formData.name || "New Personnel"}</h3>
+                 <h3 className="text-xl font-black tracking-tight text-foreground">{formData.name || "New Member"}</h3>
                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-1">
                     {formData.customRoleId ? orgRoles.find(r => r._id === formData.customRoleId)?.name : "General Team Member"}
                  </p>
@@ -269,7 +269,7 @@ export default function ManageTeamMember() {
                       type="submit"
                       className="h-14 px-10 rounded-full bg-foreground text-background font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-2xl gap-2"
                     >
-                       {saving ? "Synchronizing..." : <><Save className="h-4 w-4" /> {isEdit ? "Update Personnel" : "Finalize Onboarding"}</>}
+                       {saving ? "Saving..." : <><Save className="h-4 w-4" /> {isEdit ? "Update Member" : "Add Member"}</>}
                     </Button>
                  </div>
               </CardContent>

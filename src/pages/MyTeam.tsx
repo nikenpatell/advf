@@ -57,10 +57,10 @@ export default function MyTeam() {
 
   const columns = [
     { header: "#", width: "60px", className: "text-center" },
-    { header: "Personnel Identity", width: "300px" },
-    { header: "Designated Role" },
-    { header: "Registry Health" },
-    { header: "Enrolled Since" },
+    { header: "Member Name", width: "300px" },
+    { header: "Role" },
+    { header: "Status" },
+    { header: "Joined On" },
     { header: "Management", className: "w-[140px] text-right" }
   ];
 
@@ -69,7 +69,7 @@ export default function MyTeam() {
       <div className="flex items-center justify-between">
         <PageHeader
           title="My Team"
-          subtitle={`Managing personnel for ${currentOrg?.name || 'Workspace'}.`}
+          subtitle={`Managing team members for ${currentOrg?.name || 'Workspace'}.`}
         />
         {hasPermission("TEAM", "CREATE") && (
            <Button onClick={() => navigate("/my-team/create")} className="h-10 gap-2 bg-primary text-primary-foreground hover:bg-primary/90 font-bold px-6 rounded-full shadow-lg shadow-primary/10">
@@ -105,9 +105,16 @@ export default function MyTeam() {
               </div>
             </DataTableCell>
             <DataTableCell>
-               <div className="flex items-center gap-2">
-                  <UserCheck className="h-3.5 w-3.5 text-primary opacity-70" />
-                  <span className="text-[11px] font-black uppercase tracking-widest text-foreground">{member.role.replace('_', ' ')}</span>
+               <div className="flex flex-col gap-1">
+                 <div className="flex items-center gap-2">
+                    <UserCheck className="h-3.5 w-3.5 text-primary opacity-70" />
+                    <span className="text-[11px] font-black uppercase tracking-widest text-foreground">{member.role.replace('_', ' ')}</span>
+                 </div>
+                 {member.customRoleName && (
+                   <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest ml-5 pl-0.5 border-l border-border/50">
+                     &nbsp;{member.customRoleName}
+                   </span>
+                 )}
                </div>
             </DataTableCell>
             <DataTableCell>

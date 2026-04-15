@@ -99,11 +99,11 @@ export default function Tasks() {
 
   const columns = [
     { header: "#", width: "60px", className: "text-center" },
-    { header: "Initiative Profile", width: "320px" },
-    { header: "Registry State" },
-    { header: "Priority Weight" },
-    { header: "Assigned Personnel" },
-    { header: "Industrial Deadline" },
+    { header: "Task Name", width: "320px" },
+    { header: "Status" },
+    { header: "Priority" },
+    { header: "Assigned To" },
+    { header: "Due Date" },
     { header: "Management", className: "w-[140px] text-right" }
   ];
 

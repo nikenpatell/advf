@@ -57,8 +57,7 @@ export default function ViewCase() {
       try {
         const res = await getCaseById(id!);
         setCaseData(res.data);
-      } catch (err) {
-        toast.error("Registry access failed.");
+        toast.error("Failed to load case details.");
         navigate("/cases");
       } finally {
         setLoading(false);
@@ -80,7 +79,7 @@ export default function ViewCase() {
       const res = await getCaseById(id!);
       setCaseData(res.data);
     } catch (err) {
-      toast.error("Log orchestration failed.");
+      toast.error("Failed to add hearing.");
     } finally {
       setSavingHearing(false);
     }
@@ -96,7 +95,7 @@ export default function ViewCase() {
       setCommentText("");
       toast.success("Discussion point registered.");
     } catch (err: any) {
-      toast.error("Failed to commit discussion.");
+      toast.error("Failed to add comment.");
     } finally {
       setAddingComment(false);
     }
@@ -145,14 +144,14 @@ export default function ViewCase() {
           </Button>
           <div className="flex-1">
             <PageHeader 
-              title="Litigation Portfolio" 
-              subtitle={`Industrial oversight of Case #${caseData.caseNumber} • ${caseData.title}.`}
+              title="Case Details" 
+              subtitle={`Viewing details for Case #${caseData.caseNumber} • ${caseData.title}.`}
             />
           </div>
         </div>
         {hasPermission("CASE", "UPDATE") && (
           <Button onClick={() => navigate(`/cases/edit/${caseData._id}`)} className="h-11 gap-2 bg-foreground text-background font-black text-xs uppercase tracking-widest rounded-full hover:scale-105 transition-all w-full md:w-auto px-6 shadow-xl">
-            <Edit2 className="h-3.5 w-3.5" /> Modify Registry
+            <Edit2 className="h-3.5 w-3.5" /> Edit Case
           </Button>
         )}
       </div>
@@ -169,22 +168,22 @@ export default function ViewCase() {
              <CardContent className="p-10 space-y-12">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
                    <div className="space-y-2">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block pl-0.5">Context Stage</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block pl-0.5">Stage</span>
                       <div className="flex items-center gap-2">
                          <div className="h-2 w-2 rounded-full bg-primary" />
                          <span className="text-sm font-black uppercase text-foreground">{caseData.stage.replace('_', ' ')}</span>
                       </div>
                    </div>
                    <div className="space-y-2">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block pl-0.5">Jurisdiction</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block pl-0.5">Court</span>
                       <span className="text-sm font-black text-foreground">{caseData.courtName}</span>
                    </div>
                    <div className="space-y-2">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block pl-0.5">Registry State</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block pl-0.5">Status</span>
                       <span className="text-sm font-black text-primary uppercase">{caseData.status}</span>
                    </div>
                    <div className="space-y-2 text-right">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block pr-0.5">Inception</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block pr-0.5">Filing Date</span>
                       <span className="text-sm font-black text-foreground">{format(new Date(caseData.caseDate), "MMM yyyy")}</span>
                    </div>
                 </div>
@@ -193,11 +192,11 @@ export default function ViewCase() {
                    <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                          <History className="h-5 w-5 text-primary" />
-                         <h2 className="text-lg font-black tracking-tight">Activity & History Log</h2>
+                         <h2 className="text-lg font-black tracking-tight">History & Activities</h2>
                       </div>
                       {hasPermission("CASE", "UPDATE") && (
                         <Button variant="ghost" onClick={() => setAddingHearing(!addingHearing)} className="rounded-full gap-2 text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/10 transition-all">
-                           {addingHearing ? "Discard Scheduling" : <><Plus className="h-3 w-3" /> Orchestrate Hearing</>}
+                           {addingHearing ? "Cancel" : <><Plus className="h-3 w-3" /> Schedule Hearing</>}
                         </Button>
                       )}
                    </div>
@@ -207,7 +206,7 @@ export default function ViewCase() {
                          <form onSubmit={handleAddHearing} className="p-8 space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                <div className="space-y-2">
-                                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Scheduled Date</Label>
+                                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Date</Label>
                                   <Popover>
                                      <PopoverTrigger asChild>
                                         <Button variant="outline" className={cn("w-full h-12 justify-start text-left font-normal rounded-2xl bg-background border-border/40", !hearingForm.hearingDate && "text-muted-foreground")}>
@@ -221,7 +220,7 @@ export default function ViewCase() {
                                   </Popover>
                                </div>
                                <div className="space-y-2">
-                                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Registry Notes (Internal)</Label>
+                                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Notes</Label>
                                   <Input 
                                     placeholder="e.g. Evidence submission or Cross-examination" 
                                     value={hearingForm.notes}
@@ -274,10 +273,10 @@ export default function ViewCase() {
                                   
                                   <div className="space-y-1">
                                     <h4 className="text-[13px] font-black text-foreground/90 uppercase tracking-tight">
-                                      {isHearing ? "Litigation Hearing Scheduled" : (entry as any).action?.split("_").join(" ")}
+                                      {isHearing ? "Hearing Scheduled" : (entry as any).action?.split("_").join(" ")}
                                     </h4>
                                     <p className="text-[11px] text-muted-foreground/80 leading-relaxed max-w-xl italic">
-                                       {isHearing ? (entry as any).notes : (entry as any).details || "System synchronization complete."}
+                                       {isHearing ? (entry as any).notes : (entry as any).details || "System update."}
                                     </p>
                                   </div>
 
@@ -301,7 +300,7 @@ export default function ViewCase() {
             <CardHeader className="p-10 pb-4">
                <div className="flex items-center gap-2">
                  <MessageSquare className="h-5 w-5 text-primary" />
-                 <CardTitle className="text-xl font-black text-foreground">Litigation Discussion</CardTitle>
+                 <CardTitle className="text-xl font-black text-foreground">Discussions</CardTitle>
                </div>
             </CardHeader>
             <CardContent className="p-10 pt-4 space-y-8">
@@ -309,7 +308,7 @@ export default function ViewCase() {
                   {(caseData.comments || []).length === 0 ? (
                      <div className="text-center py-6 opacity-40">
                        <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                       <span className="text-[10px] uppercase font-black tracking-widest block">No discussions recorded</span>
+                       <span className="text-[10px] uppercase font-black tracking-widest block">No comments found</span>
                      </div>
                   ) : (
                     (caseData.comments || []).map(comment => (

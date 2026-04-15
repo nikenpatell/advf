@@ -65,7 +65,7 @@ export default function Dashboard() {
           recentCases: casesRes.data.slice(0, 5),
         });
       } catch (err) {
-        console.error("Dashboard synchronization failure:", err);
+        console.error("Dashboard load failure:", err);
       } finally {
         setLoading(false);
       }
@@ -74,10 +74,10 @@ export default function Dashboard() {
   }, []);
   
   const STATS = [
-    { label: "Case Load", value: data.caseCount.toString(), change: "+2.1%", trend: "up", description: "Active litigations", permission: { module: "CASE", action: "VIEW" } },
-    { label: "Stakeholders", value: data.clientCount.toString(), change: "+5%", trend: "up", description: "Registered entity count", permission: { module: "CLIENT", action: "VIEW" } },
-    { label: "Active Tasks", value: data.taskCount.toString(), change: "-10%", trend: "down", description: "Initiatives in-progress", permission: { module: "TASK", action: "VIEW" } },
-    { label: "Personnel", value: data.teamSize.toString(), change: "+0%", trend: "up", description: "Resource utilization", permission: { module: "TEAM", action: "VIEW" } },
+    { label: "Total Cases", value: data.caseCount.toString(), change: "+2.1%", trend: "up", description: "Active cases", permission: { module: "CASE", action: "VIEW" } },
+    { label: "Clients", value: data.clientCount.toString(), change: "+5%", trend: "up", description: "Total registered clients", permission: { module: "CLIENT", action: "VIEW" } },
+    { label: "Active Tasks", value: data.taskCount.toString(), change: "-10%", trend: "down", description: "In-progress tasks", permission: { module: "TASK", action: "VIEW" } },
+    { label: "Team Members", value: data.teamSize.toString(), change: "+0%", trend: "up", description: "Total members", permission: { module: "TEAM", action: "VIEW" } },
   ];
 
   if (loading) {
@@ -130,12 +130,12 @@ export default function Dashboard() {
       <Card className="rounded-[32px] shadow-2xl shadow-primary/5 bg-background/50 backdrop-blur-xl border border-border/40 overflow-hidden">
         <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 sm:p-8 gap-4">
           <div>
-            <CardTitle className="text-xl font-black text-foreground tracking-tight">Industrial Activity Stream</CardTitle>
-            <CardDescription className="text-xs uppercase font-bold tracking-widest opacity-60">Real-time workstation orchestration overview</CardDescription>
+            <CardTitle className="text-xl font-black text-foreground tracking-tight">Recent Cases</CardTitle>
+            <CardDescription className="text-xs uppercase font-bold tracking-widest opacity-60">Your most recently added cases</CardDescription>
           </div>
           <div className="flex bg-muted/40 p-1 rounded-full border border-border/20">
-             <Button variant="ghost" size="sm" className="h-8 text-[10px] bg-background shadow-sm font-black uppercase tracking-widest rounded-full px-4">Registry events</Button>
-             <Button variant="ghost" size="sm" className="h-8 text-[10px] text-muted-foreground uppercase font-black tracking-widest px-4">System logs</Button>
+             <Button variant="ghost" size="sm" className="h-8 text-[10px] bg-background shadow-sm font-black uppercase tracking-widest rounded-full px-4">Active</Button>
+             <Button variant="ghost" size="sm" className="h-8 text-[10px] text-muted-foreground uppercase font-black tracking-widest px-4">Archived</Button>
           </div>
         </CardHeader>
         <CardContent className="h-64 flex items-center justify-center border-t border-border/20 p-0 relative">
@@ -158,16 +158,16 @@ export default function Dashboard() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
            <div className="flex items-center bg-muted/40 p-1 rounded-full gap-1 border border-border/20 w-fit">
              <Button variant="ghost" size="sm" className="h-8 text-[10px] bg-background shadow-sm font-black uppercase tracking-widest rounded-full px-4">Active Files</Button>
-             <Button variant="ghost" size="sm" className="h-8 text-[10px] text-muted-foreground font-black uppercase tracking-widest rounded-full px-4">Past Registry</Button>
+             <Button variant="ghost" size="sm" className="h-8 text-[10px] text-muted-foreground font-black uppercase tracking-widest rounded-full px-4">Past Cases</Button>
            </div>
            
            <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" className="h-10 gap-2 border-border/40 text-[10px] font-black uppercase tracking-widest rounded-2xl bg-background/50 hover:bg-background">
-                 <Columns className="h-3.5 w-3.5" /> Registry Meta
+                 <Columns className="h-3.5 w-3.5" /> Settings
               </Button>
               {hasPermission("CASE", "CREATE") && (
                 <Button onClick={() => navigate("/cases/create")} size="sm" className="h-10 gap-2 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-lg shadow-primary/10 px-6">
-                   <Plus className="h-3.5 w-3.5" /> Initialize Case
+                   <Plus className="h-3.5 w-3.5" /> Add Case
                 </Button>
               )}
            </div>
@@ -179,11 +179,11 @@ export default function Dashboard() {
               <TableHeader className="bg-muted/30">
               <TableRow className="border-border/20 hover:bg-transparent">
                 <TableHead className="w-12 text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">ID</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Litigation Identity</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Case Name</TableHead>
                 <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Category</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Registry State</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Initialized</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Assigned Counsel</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Status</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Added</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Assigned Lawyer</TableHead>
                 <TableHead className="w-12"></TableHead>
               </TableRow>
             </TableHeader>
@@ -198,7 +198,7 @@ export default function Dashboard() {
                      </div>
                   </TableCell>
                   <TableCell>
-                     <Badge variant="outline" className="rounded-lg font-black text-[10px] uppercase tracking-tighter h-6 border-primary/20 text-primary bg-primary/5">{c.caseType?.title || "Litigation"}</Badge>
+                     <Badge variant="outline" className="rounded-lg font-black text-[10px] uppercase tracking-tighter h-6 border-primary/20 text-primary bg-primary/5">{c.caseType?.title || "Case"}</Badge>
                   </TableCell>
                   <TableCell>
                      <div className="flex items-center gap-2">
@@ -220,7 +220,7 @@ export default function Dashboard() {
                    <TableCell colSpan={7} className="h-32 text-center">
                       <div className="flex flex-col items-center gap-2 text-muted-foreground">
                          <FileText className="h-8 w-8 opacity-20" />
-                         <span className="text-xs font-black uppercase tracking-widest">No recent litigation activity</span>
+                         <span className="text-xs font-black uppercase tracking-widest">No recent cases</span>
                       </div>
                    </TableCell>
                 </TableRow>

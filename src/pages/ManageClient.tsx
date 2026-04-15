@@ -14,9 +14,11 @@ import {
   Mail, 
   Phone, 
   Lock,
-  Briefcase
+  Briefcase,
+  Users
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { getRegistry, type TypeRegistryItem } from "@/services/registry.service";
 import { cn } from "@/lib/utils";
 import { 
   getTeamMembers, 
@@ -40,14 +42,29 @@ export default function ManageClient() {
 
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
+  const [clientRoles, setClientRoles] = useState<TypeRegistryItem[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     contactNumber: "",
     role: "CLIENT",
-    status: "ACTIVE"
+    status: "ACTIVE",
+    clientRoleId: ""
   });
+
+  // Fetch CLIENT_ROLE registry items
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const res = await getRegistry("CLIENT_ROLE");
+        setClientRoles(res.data.filter((r) => r.isLive && r.status === "ACTIVE"));
+      } catch {
+        // Non-critical: dropdown just stays empty
+      }
+    };
+    fetchRoles();
+  }, []);
 
   useEffect(() => {
     if (isEdit) {
@@ -62,7 +79,8 @@ export default function ManageClient() {
               password: "",
               contactNumber: client.contactNumber || "",
               role: "CLIENT",
-              status: client.status || "ACTIVE"
+              status: client.status || "ACTIVE",
+              clientRoleId: client.clientRoleId || ""
             });
           } else {
             toast.error("Client identity not found in registry");
@@ -83,8 +101,8 @@ export default function ManageClient() {
     try {
       setSaving(true);
       if (isEdit) {
-        const { name, contactNumber, role, status } = formData;
-        const res = await updateTeamMember(id!, { name, contactNumber, role, status });
+        const { name, contactNumber, role, status, clientRoleId } = formData;
+        const res = await updateTeamMember(id!, { name, contactNumber, role, status, clientRoleId: clientRoleId || undefined });
         toast.success(res.message);
       } else {
         if (!formData.name || !formData.email || !formData.password) {
@@ -153,8 +171,8 @@ export default function ManageClient() {
         </Button>
         <div className="flex-1">
           <PageHeader 
-            title={isEdit ? "Edit Client Registry" : "Onboard New Client"} 
-            subtitle={isEdit ? `Modifying legal access for ${formData.name}.` : "Registering a new legal entity for workspace collaboration."}
+            title={isEdit ? "Edit Client" : "Add New Client"} 
+            subtitle={isEdit ? `Updating details for ${formData.name}.` : "Add a new client to your workspace."}
           />
         </div>
       </div>
@@ -170,7 +188,7 @@ export default function ManageClient() {
               </div>
               <h3 className="text-xl font-black tracking-tight text-foreground">{formData.name || "New Client"}</h3>
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-1">
-                 Workspace Stakeholder
+                 Client
               </p>
               
               <div className="mt-8 space-y-2">
@@ -178,7 +196,7 @@ export default function ManageClient() {
                     "text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border-none",
                     formData.status === "ACTIVE" ? "bg-green-500/10 text-green-500" : "bg-orange-500/10 text-orange-500"
                  )}>
-                    {formData.status} Identity
+                    {formData.status}
                  </Badge>
               </div>
             </CardContent>
@@ -188,10 +206,10 @@ export default function ManageClient() {
              <CardContent className="p-6 space-y-4">
                 <div className="flex items-center gap-3 text-muted-foreground">
                    <Briefcase className="h-4 w-4" />
-                   <span className="text-[11px] font-bold uppercase tracking-widest">Client Governance</span>
+                   <span className="text-[11px] font-bold uppercase tracking-widest">Client Access</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed text-center">
-                   Verified clients gain secure access to their specific litigation cases, invoices, and workspace updates in real-time.
+                   Clients can view their cases, invoices, and updates once verified.
                 </p>
              </CardContent>
           </Card>
@@ -202,14 +220,14 @@ export default function ManageClient() {
           <Card className="border-none shadow-2xl shadow-primary/5 bg-background/50 backdrop-blur-xl rounded-[32px] border border-border/40">
             <CardHeader className="p-8 pb-4">
               <CardTitle className="text-lg font-bold flex items-center gap-2">
-                 <Globe className="h-5 w-5 text-primary" /> Client Registry Identity
+                 <Globe className="h-5 w-5 text-primary" /> Client Details
               </CardTitle>
-              <CardDescription className="text-xs">Configure the stakeholder's digital access parameters.</CardDescription>
+              <CardDescription className="text-xs">Provide the basic information for this client.</CardDescription>
             </CardHeader>
             <CardContent className="p-8 pt-0 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Legal Name</Label>
+                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Full Name</Label>
                   <div className="relative">
                     <UserPlus className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                     <Input 
@@ -222,7 +240,7 @@ export default function ManageClient() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Registry Status</Label>
+                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Status</Label>
                   <Select 
                     value={formData.status} 
                     onValueChange={(v) => setFormData({...formData, status: v})}
@@ -231,8 +249,8 @@ export default function ManageClient() {
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent className="rounded-2xl border-border/40">
-                      <SelectItem value="ACTIVE">Active (Participating)</SelectItem>
-                      <SelectItem value="INACTIVE">Inactive (Suspended)</SelectItem>
+                      <SelectItem value="ACTIVE">Active</SelectItem>
+                      <SelectItem value="INACTIVE">Inactive</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -240,7 +258,7 @@ export default function ManageClient() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Electronic Mail</Label>
+                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Email Address</Label>
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                     <Input 
@@ -255,7 +273,7 @@ export default function ManageClient() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Communication Number</Label>
+                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Phone Number</Label>
                   <div className="relative">
                     <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                     <Input 
@@ -268,14 +286,49 @@ export default function ManageClient() {
                 </div>
               </div>
 
+              {/* Client Role Dropdown — driven by CLIENT_ROLE registry */}
+              <div className="space-y-2">
+                <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1 flex items-center gap-1.5">
+                  <Users className="h-3.5 w-3.5" /> Client Role
+                </Label>
+                <Select
+                  value={formData.clientRoleId}
+                  onValueChange={(v) => setFormData({...formData, clientRoleId: v})}
+                >
+                  <SelectTrigger className="h-12 rounded-2xl bg-muted/20 border-border/40 focus:bg-background transition-all">
+                    <SelectValue placeholder={clientRoles.length === 0 ? "No roles configured — add via Type Management" : "Select a client role..."} />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-2xl border-border/40">
+                    <SelectItem value="none">— None —</SelectItem>
+                    {clientRoles.map((role) => (
+                      <SelectItem key={role._id} value={role._id}>
+                        {role.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {clientRoles.length === 0 && (
+                  <p className="text-[10px] text-muted-foreground pl-1">
+                    No active client roles found. Add them in{" "}
+                    <button
+                      type="button"
+                      onClick={() => navigate("/type-management?category=CLIENT_ROLE")}
+                      className="underline text-primary font-bold"
+                    >
+                      Type Management
+                    </button>.
+                  </p>
+                )}
+              </div>
+
               {!isEdit && (
                 <div className="space-y-2">
-                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Client Access Key</Label>
+                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Password</Label>
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                     <Input 
                       type="password"
-                      placeholder="Initialize secure client password..." 
+                      placeholder="Set a password for the client..." 
                       value={formData.password} 
                       onChange={(e) => setFormData({...formData, password: e.target.value})} 
                       required
@@ -304,7 +357,7 @@ export default function ManageClient() {
                   ) : (
                     <span className="flex items-center gap-2">
                       <Save className="h-4 w-4" /> 
-                      {isEdit ? "Update Client" : "Finalize Registration"}
+                      {isEdit ? "Update Client" : "Add Client"}
                     </span>
                   )}
                 </Button>

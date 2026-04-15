@@ -97,8 +97,8 @@ export default function CalendarPage() {
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <PageHeader 
-          title="Industrial Calendar" 
-          subtitle="Real-time orchestration of litigation hearings and initiative deadlines."
+          title="Calendar" 
+          subtitle="View your upcoming hearings and tasks."
         />
         <div className="flex items-center gap-3 bg-muted/20 p-2 rounded-full border border-border/40 backdrop-blur-sm self-start">
           <Button variant="ghost" size="icon" onClick={prevMonth} className="rounded-full hover:bg-background h-10 w-10 transition-all active:scale-95 shadow-sm">
@@ -169,7 +169,7 @@ export default function CalendarPage() {
                     ))}
                     {dayEvents.length > 3 && (
                       <div className="text-[10px] text-muted-foreground italic pl-2 font-bold opacity-60">
-                        + {dayEvents.length - 3} more records
+                        + {dayEvents.length - 3} more events
                       </div>
                     )}
                   </div>
@@ -187,7 +187,7 @@ export default function CalendarPage() {
               <div className="bg-gradient-to-br from-muted/50 to-background p-8 border-b border-border/20 flex items-center justify-between">
                  <div>
                     <h3 className="text-2xl font-black text-foreground tracking-tight">{format(selectedDay, "MMMM d, yyyy")}</h3>
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mt-1 italic">Event Orchestration for this day</p>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mt-1 italic">Events for this day</p>
                  </div>
                  <Button variant="ghost" size="icon" onClick={() => setShowModal(false)} className="rounded-full h-11 w-11 hover:bg-primary/5 transition-all">
                     <X className="h-5 w-5" />
@@ -217,13 +217,13 @@ export default function CalendarPage() {
                        
                        {event.caseNumber && (
                           <div className="flex items-center gap-2 mb-3">
-                             <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Registry ID:</span>
+                             <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Case ID:</span>
                              <span className="text-[11px] font-bold text-primary italic">#{event.caseNumber}</span>
                           </div>
                        )}
 
                        <p className="text-[13px] text-muted-foreground leading-relaxed italic border-l-2 border-primary/20 pl-4 mb-4">
-                          {event.details || "No industrial specification provided for this entry."}
+                          {event.details || "No details provided for this event."}
                        </p>
 
                        <Button 
@@ -235,14 +235,14 @@ export default function CalendarPage() {
                         }}
                         className="w-full rounded-2xl h-10 text-[10px] font-black uppercase tracking-widest gap-2 bg-transparent border-dashed group-hover:border-primary/40 group-hover:bg-primary/5 transition-all"
                        >
-                          Open Workstation <ExternalLink className="h-3 w-3" />
+                          View Details <ExternalLink className="h-3 w-3" />
                        </Button>
                     </div>
                  ))}
               </div>
               <div className="p-8 bg-muted/10 border-t border-border/10 flex justify-end">
                  <Button onClick={() => setShowModal(false)} className="rounded-full px-8 text-[10px] font-black uppercase tracking-widest h-11 bg-foreground text-background hover:scale-105 transition-all shadow-xl">
-                    Close Manifest
+                    Close
                  </Button>
               </div>
            </div>

@@ -55,10 +55,10 @@ export default function Clients() {
 
   const columns = [
     { header: "#", width: "60px", className: "text-center" },
-    { header: "Stakeholder Identity", width: "320px" },
-    { header: "Communication Registry" },
-    { header: "Identity Health" },
-    { header: "Onboarded At" },
+    { header: "Client Name", width: "320px" },
+    { header: "Contact Info" },
+    { header: "Status" },
+    { header: "Added On" },
     { header: "Management", className: "w-[140px] text-right" }
   ];
 
@@ -66,13 +66,13 @@ export default function Clients() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <PageHeader
-          title="Client Registry"
-          subtitle={`Managing legal stakeholders for ${currentOrg?.name || 'Workspace'}.`}
+          title="Clients"
+          subtitle={`Manage clients for ${currentOrg?.name || 'Workspace'}.`}
         />
         {hasPermission("CLIENT", "CREATE") && (
            <Button onClick={() => navigate("/clients/create")} className="h-10 gap-2 bg-primary text-primary-foreground hover:bg-primary/90 font-bold rounded-full px-6 shadow-lg shadow-primary/10">
              <Plus className="h-4 w-4" />
-             Add Client Portfolio
+             Add Client
            </Button>
         )}
       </div>
@@ -81,7 +81,7 @@ export default function Clients() {
         columns={columns} 
         loading={loading} 
         empty={members.length === 0}
-        emptyMessage="No legal stakeholders registered in this context."
+        emptyMessage="No clients found in this workspace."
       >
         {members.map((member, index) => (
           <DataTableRow key={member.id}>
@@ -93,7 +93,7 @@ export default function Clients() {
                 </div>
                 <div className="flex flex-col">
                    <span className="text-sm font-black text-foreground">{member.name}</span>
-                   <span className="text-[9px] uppercase text-primary font-bold tracking-widest">{member.role} IDENTITY</span>
+                   <span className="text-[9px] uppercase text-primary font-bold tracking-widest">{member.role}</span>
                 </div>
               </div>
             </DataTableCell>
@@ -105,15 +105,15 @@ export default function Clients() {
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
                   <Phone className="h-3 w-3 opacity-50" />
-                  {member.contactNumber || "Undefined"}
+                  {member.contactNumber || "Not added"}
                 </div>
               </div>
             </DataTableCell>
             <DataTableCell>
               {member.isVerified ? (
-                <Badge className="text-[10px] uppercase font-bold tracking-tighter px-3 h-6 rounded-full bg-green-500/10 text-green-500 border-none">Verified Entity</Badge>
+                <Badge className="text-[10px] uppercase font-bold tracking-tighter px-3 h-6 rounded-full bg-green-500/10 text-green-500 border-none">Verified</Badge>
               ) : (
-                <Badge className="text-[10px] uppercase font-bold tracking-tighter px-3 h-6 rounded-full bg-orange-500/10 text-orange-500 border-none">Registry Pending</Badge>
+                <Badge className="text-[10px] uppercase font-bold tracking-tighter px-3 h-6 rounded-full bg-orange-500/10 text-orange-500 border-none">Pending OTP</Badge>
               )}
             </DataTableCell>
             <DataTableCell className="text-xs text-foreground/70 font-bold">

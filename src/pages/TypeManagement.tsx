@@ -18,7 +18,8 @@ import {
   Trash2, 
   Star,
   Settings2,
-  ChevronRight
+  ChevronRight,
+  Users
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
@@ -38,6 +39,7 @@ const CATEGORIES = [
   { id: "PAYMENT_MODE", label: "Payment Modes", icon: Wallet, desc: "Financial transaction methods." },
   { id: "DOCUMENT_TYPE", label: "Document Assets", icon: FileText, desc: "Legal asset and file classifications." },
   { id: "EXPENSE_CATEGORY", label: "Expense Types", icon: Receipt, desc: "Firm overhead and case fees categorization." },
+  { id: "CLIENT_ROLE", label: "Client Roles", icon: Users, desc: "Role categorization for system clients." },
 ] as const;
 
 export default function TypeManagement() {
@@ -59,7 +61,7 @@ export default function TypeManagement() {
       const res = await getRegistry(selectedCategory);
       setItems(res.data);
     } catch (err: any) {
-      toast.error("Failed to synchronize registry categories.");
+      toast.error("Failed to load categories.");
     } finally {
       setLoading(false);
     }
@@ -88,7 +90,7 @@ export default function TypeManagement() {
       setDeleteId(null);
       fetchItems();
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Registry decommission failed.");
+      toast.error(err.response?.data?.message || "Delete failed.");
     } finally {
       setDeleting(false);
     }
@@ -96,14 +98,14 @@ export default function TypeManagement() {
 
   const toggleStatus = async (item: TypeRegistryItem, field: "isLive" | "isPrime") => {
      if (!hasPermission("REGISTRY", "UPDATE")) {
-        return toast.error("Authorization failure: Registry update privileges required.");
+        return toast.error("Authorization failure: You do not have permission to update categories.");
      }
      try {
         const payload = { ...item, [field]: !item[field] };
         await updateType(item._id, payload);
         fetchItems(); // Refresh for consistent 'isPrime' uniquely per category
      } catch (err) {
-        toast.error("Failed to update registry status.");
+        toast.error("Failed to update status.");
      }
   };
 
@@ -113,10 +115,10 @@ export default function TypeManagement() {
 
   const columns = [
     { header: "#", width: "60px", className: "text-center" },
-    { header: "Classification Title" },
-    { header: "Registry Status", className: "text-center" },
-    { header: "Live state", className: "text-center" },
-    { header: "Prime", className: "text-center" },
+    { header: "Name" },
+    { header: "Status", className: "text-center" },
+    { header: "Active", className: "text-center" },
+    { header: "Default", className: "text-center" },
     { header: "Management", className: "w-[120px] text-right" }
   ];
 
@@ -125,7 +127,7 @@ export default function TypeManagement() {
       <div className="flex items-center justify-between">
         <PageHeader 
           title="Type Management" 
-          subtitle="Industrial orchestration of system registry categories." 
+          subtitle="Manage categories and types for the system." 
         />
         {hasPermission("REGISTRY", "CREATE") && (
           <Button onClick={handleOpenCreate} className="h-10 gap-2 bg-primary text-primary-foreground hover:bg-primary/90 font-bold px-6 rounded-full shadow-lg shadow-primary/10">
@@ -146,7 +148,7 @@ export default function TypeManagement() {
                   </div>
                   <span className="text-xs font-bold uppercase tracking-widest text-foreground">Registry</span>
                </div>
-               <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-tighter">System Categories</p>
+               <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-tighter">Settings</p>
             </CardHeader>
             <CardContent className="p-2 space-y-1">
                {CATEGORIES.map((cat) => {
@@ -192,7 +194,7 @@ export default function TypeManagement() {
               </div>
               <div className="flex items-center gap-2 p-1 px-3 bg-muted/40 rounded-full border border-border/30 h-11 shrink-0">
                  <Star className="h-3.5 w-3.5 text-primary fill-primary" />
-                 <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{selectedCategory.replace('_', ' ')} Context</span>
+                 <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{selectedCategory.replace('_', ' ')} Category</span>
               </div>
            </div>
 
@@ -200,7 +202,7 @@ export default function TypeManagement() {
              columns={columns} 
              loading={loading} 
              empty={filteredItems.length === 0}
-             emptyMessage="No classifications found for this registry context."
+             emptyMessage="No items found in this category."
            >
               {filteredItems.map((item, index) => (
                 <DataTableRow key={item._id}>

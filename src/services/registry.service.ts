@@ -5,7 +5,7 @@ import { ApiResponse } from "@/types/auth";
 export interface TypeRegistryItem {
   _id: string;
   title: string;
-  category: "CASE_TYPE" | "CASE_STAGE" | "PAYMENT_MODE" | "DOCUMENT_TYPE" | "EXPENSE_CATEGORY";
+  category: "CASE_TYPE" | "CASE_STAGE" | "PAYMENT_MODE" | "DOCUMENT_TYPE" | "EXPENSE_CATEGORY" | "CLIENT_ROLE";
   isLive: boolean;
   isPrime: boolean;
   status: "ACTIVE" | "INACTIVE";
