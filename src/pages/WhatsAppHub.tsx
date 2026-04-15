@@ -8,7 +8,6 @@ import {
   FiRefreshCw, 
   FiActivity,
   FiX,
-  FiCheckCircle,
   FiAlertCircle
 } from "react-icons/fi";
 import { toast } from "react-hot-toast";
