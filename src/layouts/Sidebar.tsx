@@ -1,4 +1,5 @@
-import { NavLink } from "react-router-dom";
+import { useEffect } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/store/useUIStore";
 import { useOrgStore } from "@/store/useOrgStore";
@@ -61,6 +62,12 @@ export default function Sidebar() {
   const { sidebarOpen, setSidebarOpen } = useUIStore();
   const { currentOrg } = useOrgStore();
   const { user } = useAuthStore();
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    // Automatically collapse sidebar on navigation in mobile views
+    setSidebarOpen(false);
+  }, [pathname, setSidebarOpen]);
 
   return (
     <>

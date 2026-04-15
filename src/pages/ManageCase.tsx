@@ -206,7 +206,7 @@ export default function ManageCase() {
                     </Select>
                  </div>
                  <div className="space-y-2">
-                    <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Case Stage</Label>
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">Current Case Stage</Label>
                     <Select value={formData.stage} onValueChange={(v) => setFormData({...formData, stage: v})} required>
                        <SelectTrigger className="h-12 rounded-2xl bg-muted/10 border-border/40">
                           <SelectValue placeholder="Select Stage" />
@@ -249,7 +249,7 @@ export default function ManageCase() {
           <Card className="border-none shadow-2xl shadow-primary/5 bg-background/50 backdrop-blur-xl rounded-[32px] border border-border/40 overflow-hidden">
              <CardHeader className="p-8 pb-4">
                 <CardTitle className="text-lg font-black flex items-center gap-2">
-                   <Users className="h-5 w-5 text-primary" /> Parties Involved
+                   <Users className="h-5 w-5 text-primary" /> Clients & Counsel
                 </CardTitle>
              </CardHeader>
              <CardContent className="p-8 pt-0 space-y-8">
@@ -289,64 +289,100 @@ export default function ManageCase() {
         </div>
 
         <div className="lg:col-span-1 space-y-8">
-           <Card className="border-none shadow-2xl shadow-primary/5 bg-background/50 backdrop-blur-xl rounded-[32px] border border-border/40 overflow-hidden">
-              <CardHeader className="p-8 pb-4">
-                 <CardTitle className="text-lg font-black flex items-center gap-2">
-                    <CalendarIcon className="h-5 w-5 text-primary" /> Management
-                 </CardTitle>
-              </CardHeader>
-              <CardContent className="p-8 pt-0 space-y-6">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                       <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80">Case Status</Label>
-                       <Select value={formData.status} onValueChange={(v) => setFormData({...formData, status: v as any})}>
-                          <SelectTrigger className="h-12 rounded-2xl bg-muted/10 border-border/40">
-                             <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="rounded-2xl border-border/40">
-                             <SelectItem value="OPEN">Open</SelectItem>
-                             <SelectItem value="PENDING">Pending</SelectItem>
-                             <SelectItem value="CLOSED">Closed</SelectItem>
-                          </SelectContent>
-                       </Select>
-                    </div>
+            <Card className="border-none shadow-2xl shadow-primary/5 bg-background/50 backdrop-blur-xl rounded-[32px] border border-border/40 overflow-hidden">
+               <CardHeader className="p-8 pb-4">
+                  <CardTitle className="text-lg font-black flex items-center gap-2">
+                     <CalendarIcon className="h-5 w-5 text-primary" /> Management
+                  </CardTitle>
+               </CardHeader>
+               <CardContent className="p-8 pt-0 space-y-6">
+                   <div className="space-y-4">
+                     <div className="space-y-2">
+                        <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80">Case Status</Label>
+                        <Select value={formData.status} onValueChange={(v) => setFormData({...formData, status: v as any})}>
+                           <SelectTrigger className="h-12 rounded-2xl bg-muted/10 border-border/40">
+                              <SelectValue />
+                           </SelectTrigger>
+                           <SelectContent className="rounded-2xl border-border/40">
+                              <SelectItem value="OPEN">Open</SelectItem>
+                              <SelectItem value="PENDING">Pending</SelectItem>
+                              <SelectItem value="CLOSED">Closed</SelectItem>
+                           </SelectContent>
+                        </Select>
+                     </div>
 
-                    <div className="space-y-2">
-                       <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 italic">Next Hearing Date</Label>
-                       <Popover>
-                          <PopoverTrigger asChild>
-                             <Button variant="outline" className={cn("w-full h-12 justify-start text-left font-normal rounded-2xl bg-muted/10 border-border/40", !formData.nextHearingDate && "text-muted-foreground")}>
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {formData.nextHearingDate ? format(new Date(formData.nextHearingDate), "PPP") : <span>Select Date</span>}
-                             </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0 rounded-3xl overflow-hidden border-border/40 shadow-2xl">
-                             <Calendar mode="single" selected={formData.nextHearingDate ? new Date(formData.nextHearingDate) : undefined} onSelect={(d) => setFormData({...formData, nextHearingDate: d?.toISOString() || ""})} initialFocus />
-                          </PopoverContent>
-                       </Popover>
-                    </div>
+                     <div className="space-y-2">
+                        <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 italic">Next Hearing Date</Label>
+                        <Popover>
+                           <PopoverTrigger asChild>
+                              <Button variant="outline" className={cn("w-full h-12 justify-start text-left font-normal rounded-2xl bg-muted/10 border-border/40", !formData.nextHearingDate && "text-muted-foreground")}>
+                                 <CalendarIcon className="mr-2 h-4 w-4" />
+                                 {formData.nextHearingDate ? format(new Date(formData.nextHearingDate), "PPP") : <span>Select Date</span>}
+                              </Button>
+                           </PopoverTrigger>
+                           <PopoverContent className="w-auto p-0 rounded-3xl overflow-hidden border-border/40 shadow-2xl">
+                              <Calendar mode="single" selected={formData.nextHearingDate ? new Date(formData.nextHearingDate) : undefined} onSelect={(d) => setFormData({...formData, nextHearingDate: d?.toISOString() || ""})} initialFocus />
+                           </PopoverContent>
+                        </Popover>
+                     </div>
 
-                    {isEdit && (
-                        <div className="space-y-2 pt-2 border-t border-border/10">
-                           <Label className="text-[11px] font-black uppercase tracking-widest text-primary/80">Update Note</Label>
-                           <Input 
-                              placeholder="e.g. Stage update to evidence" 
-                              value={formData.changeNote}
-                              onChange={(e) => setFormData({...formData, changeNote: e.target.value})}
-                              className="h-12 rounded-2xl bg-primary/5 border-primary/20 focus:bg-background transition-all"
-                           />
-                           <p className="text-[9px] text-muted-foreground/60 italic pl-1 font-bold">This will be saved to the case history.</p>
+                     {isEdit && (
+                         <div className="space-y-2 pt-2 border-t border-border/10">
+                            <Label className="text-[11px] font-black uppercase tracking-widest text-primary/80">Update Note</Label>
+                            <Input 
+                               placeholder="e.g. Stage update to evidence" 
+                               value={formData.changeNote}
+                               onChange={(e) => setFormData({...formData, changeNote: e.target.value})}
+                               className="h-12 rounded-2xl bg-primary/5 border-primary/20 focus:bg-background transition-all"
+                            />
+                            <p className="text-[9px] text-muted-foreground/60 italic pl-1 font-bold">This will be saved to the case history.</p>
+                         </div>
+                     )}
+                  </div>
+
+                  <div className="pt-6 space-y-4">
+                     <Button type="submit" disabled={saving} className="w-full h-14 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest shadow-2xl transition-all">
+                        {saving ? "Saving..." : (isEdit ? "Save Changes" : "Save Case")}
+                     </Button>
+                  </div>
+               </CardContent>
+            </Card>
+
+            <Card className="border-none shadow-2xl shadow-primary/5 bg-primary/5 rounded-[32px] border border-primary/10 overflow-hidden">
+               <CardHeader className="p-8 pb-4">
+                  <CardTitle className="text-sm font-black flex items-center gap-2 text-primary">
+                     <Scale className="h-4 w-4" /> How CMS Works
+                  </CardTitle>
+               </CardHeader>
+               <CardContent className="p-8 pt-0 space-y-4">
+                  <p className="text-[11px] font-bold text-foreground/70 leading-relaxed uppercase tracking-tight">
+                    This Case Management System (CMS) is designed to help advocates efficiently track and manage cases from initiation to closure.
+                  </p>
+                  <div className="space-y-3">
+                     <div className="flex gap-3">
+                        <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                           <span className="text-[9px] font-black text-primary">1</span>
                         </div>
-                    )}
-                 </div>
-
-                 <div className="pt-6 space-y-4">
-                    <Button type="submit" disabled={saving} className="w-full h-14 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest shadow-2xl transition-all">
-                       {saving ? "Saving..." : (isEdit ? "Save Changes" : "Save Case")}
-                    </Button>
-                 </div>
-              </CardContent>
-           </Card>
+                        <div className="space-y-1">
+                           <span className="text-[10px] font-black uppercase text-primary">Common Details</span>
+                           <p className="text-[11px] text-muted-foreground leading-snug">Enter foundational data (Case #, Client, Type) once. This remains constant throughout the case lifecycle.</p>
+                        </div>
+                     </div>
+                     <div className="flex gap-3">
+                        <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                           <span className="text-[9px] font-black text-primary">2</span>
+                        </div>
+                        <div className="space-y-1">
+                           <span className="text-[10px] font-black uppercase text-primary">Hearing Updates</span>
+                           <p className="text-[11px] text-muted-foreground leading-snug">Add chronological updates after setup (Dates, Stages, Orders). This ensures all developments are easily retrievable.</p>
+                        </div>
+                     </div>
+                  </div>
+                  <p className="text-[10px] italic text-muted-foreground/60 pt-2 border-t border-primary/10">
+                    Focus on clarity and structure. Separate one-time details from recurring updates for maximum efficiency.
+                  </p>
+               </CardContent>
+            </Card>
         </div>
       </form>
     </div>

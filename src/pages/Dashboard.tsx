@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/button";
 import { 
   ArrowUpRight, 
   ArrowDownRight, 
-  Columns,
   Plus,
   CheckCircle2,
   Clock,
@@ -97,7 +96,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-12">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {STATS.map((stat, i) => (
           hasPermission(stat.permission.module as any, stat.permission.action as any) ? (
@@ -130,25 +129,25 @@ export default function Dashboard() {
       <Card className="rounded-[32px] shadow-2xl shadow-primary/5 bg-background/50 backdrop-blur-xl border border-border/40 overflow-hidden">
         <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 sm:p-8 gap-4">
           <div>
-            <CardTitle className="text-xl font-black text-foreground tracking-tight">Recent Cases</CardTitle>
-            <CardDescription className="text-xs uppercase font-bold tracking-widest opacity-60">Your most recently added cases</CardDescription>
+            <CardTitle className="text-xl font-black text-foreground tracking-tight">Recent Activity</CardTitle>
+            <CardDescription className="text-xs uppercase font-bold tracking-widest opacity-60">Latest industrial litigation records</CardDescription>
           </div>
           <div className="flex bg-muted/40 p-1 rounded-full border border-border/20">
-             <Button variant="ghost" size="sm" className="h-8 text-[10px] bg-background shadow-sm font-black uppercase tracking-widest rounded-full px-4">Active</Button>
-             <Button variant="ghost" size="sm" className="h-8 text-[10px] text-muted-foreground uppercase font-black tracking-widest px-4">Archived</Button>
+             <Button variant="ghost" size="sm" className="h-8 text-[10px] bg-background shadow-sm font-black uppercase tracking-widest rounded-full px-4 text-primary">Live Insights</Button>
+             <Button variant="ghost" size="sm" className="h-8 text-[10px] text-muted-foreground uppercase font-black tracking-widest px-4">Historical Data</Button>
           </div>
         </CardHeader>
-        <CardContent className="h-64 flex items-center justify-center border-t border-border/20 p-0 relative">
+        <CardContent className="h-64 flex items-center justify-center border-t border-border/20 p-0 relative bg-muted/5">
            {/* Chart Mockup */}
-           <div className="w-full h-full bg-gradient-to-b from-muted/10 to-transparent flex flex-col items-center justify-center">
-              <div className="flex items-end gap-1.5 w-full max-w-xl h-32 mb-4 px-8 overflow-hidden opacity-40 hover:opacity-100 transition-opacity">
+           <div className="w-full h-full bg-gradient-to-b from-primary/5 to-transparent flex flex-col items-center justify-center overflow-hidden">
+              <div className="flex items-end gap-1.5 w-full max-w-xl h-32 mb-4 px-8 overflow-hidden opacity-30 hover:opacity-100 transition-opacity">
                  {[40, 70, 45, 90, 65, 80, 55, 100, 75, 85, 45, 60, 95, 70, 50, 80, 110, 65].map((h, i) => (
                     <div key={i} className="w-full bg-primary h-full rounded-t-lg transition-all hover:scale-110" style={{ height: `${h}%` }}></div>
                  ))}
               </div>
-              <div className="absolute bottom-6 flex items-center gap-2 px-4 py-1.5 bg-background border border-border rounded-full shadow-xl animate-bounce">
+              <div className="absolute bottom-6 flex items-center gap-2 px-6 py-2 bg-background border border-border/40 rounded-full shadow-2xl animate-bounce">
                  <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                 <span className="text-[10px] font-black uppercase tracking-widest text-foreground">Cloud Sync Active</span>
+                 <span className="text-[10px] font-black uppercase tracking-widest text-foreground">Registry Connectivity Optimized</span>
               </div>
            </div>
         </CardContent>
@@ -158,16 +157,13 @@ export default function Dashboard() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
            <div className="flex items-center bg-muted/40 p-1 rounded-full gap-1 border border-border/20 w-fit">
              <Button variant="ghost" size="sm" className="h-8 text-[10px] bg-background shadow-sm font-black uppercase tracking-widest rounded-full px-4">Active Files</Button>
-             <Button variant="ghost" size="sm" className="h-8 text-[10px] text-muted-foreground font-black uppercase tracking-widest rounded-full px-4">Past Cases</Button>
+             <Button variant="ghost" size="sm" className="h-8 text-[10px] text-muted-foreground font-black uppercase tracking-widest rounded-full px-4">Archive Registry</Button>
            </div>
            
            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="h-10 gap-2 border-border/40 text-[10px] font-black uppercase tracking-widest rounded-2xl bg-background/50 hover:bg-background">
-                 <Columns className="h-3.5 w-3.5" /> Settings
-              </Button>
               {hasPermission("CASE", "CREATE") && (
-                <Button onClick={() => navigate("/cases/create")} size="sm" className="h-10 gap-2 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-lg shadow-primary/10 px-6">
-                   <Plus className="h-3.5 w-3.5" /> Add Case
+                <Button onClick={() => navigate("/cases/create")} className="h-10 gap-2 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-lg shadow-primary/10 px-6 transition-transform hover:scale-105">
+                   <Plus className="h-3.5 w-3.5" /> Register Case
                 </Button>
               )}
            </div>
@@ -178,12 +174,12 @@ export default function Dashboard() {
             <Table>
               <TableHeader className="bg-muted/30">
               <TableRow className="border-border/20 hover:bg-transparent">
-                <TableHead className="w-12 text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">ID</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Case Name</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Category</TableHead>
+                <TableHead className="w-12 text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">#</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Case Title</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Stage</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Next Hearing</TableHead>
                 <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Status</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Added</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Assigned Lawyer</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Counsel</TableHead>
                 <TableHead className="w-12"></TableHead>
               </TableRow>
             </TableHeader>
@@ -191,23 +187,39 @@ export default function Dashboard() {
               {data.recentCases.map((c, i) => (
                 <TableRow key={c._id} className="border-border/20 group hover:bg-primary/5 transition-colors cursor-pointer" onClick={() => navigate(`/cases/view/${c._id}`)}>
                   <TableCell className="text-center font-black text-xs text-muted-foreground">{i + 1}</TableCell>
-                  <TableCell className="font-black text-sm tracking-tight text-foreground">
+                  <TableCell className="font-black text-sm tracking-tight text-foreground p-4">
                      <div className="flex flex-col">
                         <span>{c.title}</span>
-                        <span className="text-[10px] text-muted-foreground uppercase tracking-widest opacity-60">#{c.caseNumber}</span>
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-widest opacity-60">CAS-{c.caseNumber}</span>
                      </div>
                   </TableCell>
                   <TableCell>
-                     <Badge variant="outline" className="rounded-lg font-black text-[10px] uppercase tracking-tighter h-6 border-primary/20 text-primary bg-primary/5">{c.caseType?.title || "Case"}</Badge>
+                     <Badge variant="outline" className="rounded-lg font-black text-[9px] uppercase tracking-widest h-6 border-primary/20 text-primary bg-primary/5 px-2">{c.stage || "N/A"}</Badge>
+                  </TableCell>
+                  <TableCell>
+                     {c.nextHearingDate ? (
+                        <div className="flex flex-col">
+                           <span className="text-xs font-black text-emerald-600 uppercase">{format(new Date(c.nextHearingDate), "dd MMM yyyy")}</span>
+                           <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-tight">{format(new Date(c.nextHearingDate), "EEEE")}</span>
+                        </div>
+                     ) : (
+                        <span className="text-[10px] font-black text-muted-foreground/40 italic uppercase tracking-widest">No Date Set</span>
+                     )}
                   </TableCell>
                   <TableCell>
                      <div className="flex items-center gap-2">
-                        {c.status === "CLOSED" ? <CheckCircle2 className="h-4 w-4 text-emerald-500 scale-110" /> : <Clock className="h-4 w-4 text-orange-500" />}
-                        <span className={`text-[12px] font-black uppercase tracking-tighter ${c.status === "CLOSED" ? "text-emerald-600" : "text-muted-foreground"}`}>{c.status}</span>
+                        {c.status === "CLOSED" ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> : <Clock className="h-3.5 w-3.5 text-orange-500" />}
+                        <span className={`text-[11px] font-black uppercase tracking-tighter ${c.status === "CLOSED" ? "text-emerald-600" : "text-muted-foreground"}`}>{c.status}</span>
                      </div>
                   </TableCell>
-                  <TableCell className="font-black text-xs text-foreground/80">{format(new Date(c.createdAt), "dd MMM yy")}</TableCell>
-                  <TableCell className="font-black text-xs text-foreground/80">{c.assignedTo?.name || "Unassigned"}</TableCell>
+                  <TableCell>
+                     <div className="flex flex-col">
+                        <span className="text-xs font-black text-foreground/80">{c.assignedMembers?.[0]?.name || "Unassigned"}</span>
+                        {c.assignedMembers?.length > 1 && (
+                           <span className="text-[9px] text-muted-foreground font-bold italic">+{c.assignedMembers.length - 1} more counsel</span>
+                        )}
+                     </div>
+                  </TableCell>
                   <TableCell>
                     <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary text-primary hover:text-white">
                        <ArrowUpRight className="h-4 w-4" />
@@ -217,10 +229,12 @@ export default function Dashboard() {
               ))}
               {data.recentCases.length === 0 && (
                 <TableRow>
-                   <TableCell colSpan={7} className="h-32 text-center">
-                      <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                         <FileText className="h-8 w-8 opacity-20" />
-                         <span className="text-xs font-black uppercase tracking-widest">No recent cases</span>
+                   <TableCell colSpan={7} className="h-48 text-center bg-muted/5">
+                      <div className="flex flex-col items-center gap-3 text-muted-foreground/40">
+                         <div className="h-16 w-16 rounded-full bg-muted/20 flex items-center justify-center">
+                            <FileText className="h-8 w-8" />
+                         </div>
+                         <span className="text-xs font-black uppercase tracking-widest">Registry Portfolio Empty</span>
                       </div>
                    </TableCell>
                 </TableRow>

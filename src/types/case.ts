@@ -12,6 +12,9 @@ export interface HearingHistory {
   _id: string;
   hearingDate: string;
   notes: string;
+  stage?: string;
+  orders?: string;
+  nextHearingDate?: string;
   status: "SCHEDULED" | "COMPLETED" | "CANCELLED" | "POSTPONED";
   createdBy: { _id: string; name: string };
   createdAt: string;

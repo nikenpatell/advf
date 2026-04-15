@@ -228,16 +228,16 @@ export default function Header() {
         <Button 
           variant="default" 
           size="sm" 
-          className="h-9 gap-2 bg-foreground text-background hover:scale-105 transition-transform font-black text-[10px] uppercase tracking-widest px-4 hidden lg:flex rounded-full shadow-lg"
+          className="h-9 gap-2 bg-foreground text-background hover:scale-105 transition-transform font-black text-[10px] uppercase tracking-widest px-4 hidden sm:flex rounded-full shadow-lg"
           onClick={initSwitchIdentity}
         >
           <RefreshCw className="h-3.5 w-3.5 stroke-[3px]" />
-          Switch Identity
+          <span className="hidden lg:inline">Switch Identity</span>
         </Button>
 
         <div className="flex items-center gap-1 px-3 border-l border-border/40 ml-1">
-           <div className="flex flex-col mr-3 items-end hidden lg:flex">
-             <span className="text-[12px] font-black text-foreground leading-none">{currentOrg?.name || "Workspace Null"}</span>
+           <div className="flex flex-col mr-3 items-end hidden md:flex lg:flex">
+             <span className="text-[12px] font-black text-foreground leading-none max-w-[100px] truncate">{currentOrg?.name || "Workspace Null"}</span>
              <span className="text-[9px] font-black text-primary uppercase tracking-widest mt-1 italic">{user?.role?.replace("_", " ")}</span>
            </div>
            
