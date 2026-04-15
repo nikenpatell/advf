@@ -91,12 +91,18 @@ export default function ManageTeamMember() {
     e.preventDefault();
     try {
       setSaving(true);
+      
+      // 10-digit mobile number validation
+      if (formData.contactNumber && !/^\d{10}$/.test(formData.contactNumber.replace(/\D/g, ''))) {
+         return toast.error("Mobile number must be exactly 10 digits.");
+      }
+
       if (isEdit) {
         const res = await updateTeamMember(id!, formData);
         toast.success(res.message);
       } else {
-        if (!formData.name || !formData.email || !formData.password) {
-           return toast.error("Essential registry fields are missing.");
+        if (!formData.name || !formData.email || !formData.password || !formData.contactNumber) {
+           return toast.error("Essential registry fields (Name, Email, Password, and Mobile Number) are missing.");
         }
         const res = await createTeamMember(formData);
         toast.success(res.message);
@@ -231,13 +237,14 @@ export default function ManageTeamMember() {
                        </div>
                     </div>
                     <div className="space-y-2">
-                       <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">Communication Number</Label>
+                       <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">Mobile Number</Label>
                        <div className="relative group">
                           <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                           <Input 
                             value={formData.contactNumber}
                             onChange={(e) => setFormData({...formData, contactNumber: e.target.value})}
-                            placeholder="+1 (555) 000-0000"
+                            placeholder="e.g. 9876543210"
+                            required
                             className="h-14 pl-12 rounded-2xl bg-muted/20 border-border/40 focus:bg-background transition-all font-bold"
                           />
                        </div>

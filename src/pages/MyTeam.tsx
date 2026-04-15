@@ -58,7 +58,8 @@ export default function MyTeam() {
   const columns = [
     { header: "#", width: "60px", className: "text-center" },
     { header: "Member Name", width: "300px" },
-    { header: "Role" },
+    { header: "System Role" },
+    { header: "Assigned Role" },
     { header: "Status" },
     { header: "Joined On" },
     { header: "Management", className: "w-[140px] text-right" }
@@ -105,17 +106,19 @@ export default function MyTeam() {
               </div>
             </DataTableCell>
             <DataTableCell>
-               <div className="flex flex-col gap-1">
-                 <div className="flex items-center gap-2">
-                    <UserCheck className="h-3.5 w-3.5 text-primary opacity-70" />
-                    <span className="text-[11px] font-black uppercase tracking-widest text-foreground">{member.role.replace('_', ' ')}</span>
-                 </div>
-                 {member.customRoleName && (
-                   <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest ml-5 pl-0.5 border-l border-border/50">
-                     &nbsp;{member.customRoleName}
-                   </span>
-                 )}
+               <div className="flex items-center gap-2">
+                  <UserCheck className="h-3.5 w-3.5 text-primary opacity-70" />
+                  <span className="text-[11px] font-black uppercase tracking-widest text-foreground">{member.role.replace('_', ' ')}</span>
                </div>
+            </DataTableCell>
+            <DataTableCell>
+               {member.customRoleName ? (
+                 <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-tighter px-3 h-6 rounded-full border-primary/20 bg-primary/5 text-primary">
+                   {member.customRoleName}
+                 </Badge>
+               ) : (
+                 <span className="text-[10px] text-muted-foreground/40 italic font-bold uppercase tracking-widest">General Access</span>
+               )}
             </DataTableCell>
             <DataTableCell>
               {member.isVerified ? (

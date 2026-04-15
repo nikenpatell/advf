@@ -57,6 +57,7 @@ export default function Clients() {
     { header: "#", width: "60px", className: "text-center" },
     { header: "Client Name", width: "320px" },
     { header: "Contact Info" },
+    { header: "Client Role" },
     { header: "Status" },
     { header: "Added On" },
     { header: "Management", className: "w-[140px] text-right" }
@@ -108,6 +109,15 @@ export default function Clients() {
                   {member.contactNumber || "Not added"}
                 </div>
               </div>
+            </DataTableCell>
+            <DataTableCell>
+              {member.clientRole ? (
+                <Badge className="text-[10px] uppercase font-bold tracking-tighter px-3 h-6 rounded-full bg-primary/10 text-primary border-none">
+                  {member.clientRole}
+                </Badge>
+              ) : (
+                <span className="text-xs text-muted-foreground italic font-medium">No Role Assigned</span>
+              )}
             </DataTableCell>
             <DataTableCell>
               {member.isVerified ? (

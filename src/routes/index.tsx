@@ -38,6 +38,7 @@ const ManageRoles = lazy(() => import("@/pages/ManageRoles"));
 const AddEditRole = lazy(() => import("@/pages/AddEditRole"));
 
 const ComingSoon = lazy(() => import("@/pages/ComingSoon"));
+const WhatsAppHub = lazy(() => import("@/pages/WhatsAppHub"));
 
 // Generic fallback loader for suspensions
 const PageLoader = () => <Loader fullPage size="lg" />;
@@ -109,6 +110,7 @@ export default function AppRoutes() {
                 <Route path={ROUTES.BILLING} element={<ComingSoon />} />
                 <Route path={ROUTES.MESSAGES} element={<ComingSoon />} />
                 <Route path={ROUTES.SETTINGS} element={<ComingSoon />} />
+                <Route path="/whatsapp-hub" element={<WhatsAppHub />} />
 
                 {/* Catch-all Auth Routes inside app -> Redirect Home */}
                 <Route path="*" element={<Navigate to={ROUTES.DASHBOARD} replace />} />

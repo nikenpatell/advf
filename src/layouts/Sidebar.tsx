@@ -41,6 +41,7 @@ const NAV_CONFIG = {
     { label: "Calendar", href: ROUTES.CALENDAR, icon: Calendar },
     { label: "Tasks", href: ROUTES.TASKS, icon: CheckSquare },
     { label: "Types", href: ROUTES.TYPE_MANAGEMENT, icon: Layers },
+    { label: "WhatsApp Hub", href: "/whatsapp-hub", icon: MessageSquare },
   ],
   TEAM_MEMBER: [
     { label: "Dashboard", href: ROUTES.DASHBOARD, icon: LayoutDashboard },

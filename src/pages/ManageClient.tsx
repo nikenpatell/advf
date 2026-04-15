@@ -100,6 +100,12 @@ export default function ManageClient() {
     e.preventDefault();
     try {
       setSaving(true);
+      
+      // 10-digit mobile number validation
+      if (formData.contactNumber && !/^\d{10}$/.test(formData.contactNumber.replace(/\D/g, ''))) {
+         return toast.error("Mobile number must be exactly 10 digits.");
+      }
+
       if (isEdit) {
         const { name, contactNumber, role, status, clientRoleId } = formData;
         const res = await updateTeamMember(id!, { name, contactNumber, role, status, clientRoleId: clientRoleId || undefined });
@@ -273,13 +279,14 @@ export default function ManageClient() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Phone Number</Label>
+                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Mobile Number</Label>
                   <div className="relative">
                     <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                     <Input 
-                      placeholder="+1 (555) 000-0000" 
+                      placeholder="e.g. 9876543210" 
                       value={formData.contactNumber} 
                       onChange={(e) => setFormData({...formData, contactNumber: e.target.value})} 
+                      required
                       className="h-12 pl-12 rounded-2xl bg-muted/20 border-border/40 focus:bg-background transition-all"
                     />
                   </div>
