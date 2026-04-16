@@ -130,7 +130,7 @@ export default function WhatsAppHub() {
         </div>
         <Button 
           onClick={() => setModalOpen(true)}
-          className="h-14 gap-3 bg-zinc-900 text-white hover:bg-zinc-800 font-bold text-sm rounded-2xl px-8 transition-all hover:shadow-2xl hover:shadow-zinc-200 active:scale-95"
+          className="h-14 gap-3 bg-zinc-900 text-white  font-bold text-sm rounded-2xl px-8 transition-all  active:scale-95"
         >
           <FiPlus className="h-5 w-5" /> Add Account
         </Button>
@@ -290,7 +290,7 @@ export default function WhatsAppHub() {
               <Button 
                 onClick={handleCreateSession} 
                 disabled={creating || !newSessionName}
-                className="w-full h-14 bg-zinc-900 text-white hover:bg-zinc-800 rounded-2xl font-bold text-sm transition-all shadow-xl shadow-zinc-200 active:scale-[0.98] disabled:opacity-50"
+                className="w-full h-14 bg-zinc-900 text-white  rounded-2xl font-bold text-sm transition-all shadow-xl  disabled:opacity-50"
               >
                 {creating ? (
                   <div className="flex items-center gap-2">
