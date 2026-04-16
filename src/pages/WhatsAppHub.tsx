@@ -28,7 +28,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-const BACKEND_URL = "http://localhost:5000"; // Should be from config
+const BACKEND_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
 
 export default function WhatsAppHub() {
   const [sessions, setSessions] = useState<WhatsAppSession[]>([]);
@@ -159,6 +159,7 @@ export default function WhatsAppHub() {
                        "h-7 rounded-full px-4 font-bold text-[10px] uppercase tracking-wider border-0",
                        session.status === "CONNECTED" ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : 
                        session.status === "QR_GENERATED" ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 animate-pulse" :
+                       session.status === "INITIALIZING" ? "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 animate-pulse" :
                        "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400"
                      )}
                    >
@@ -200,6 +201,16 @@ export default function WhatsAppHub() {
                          <span className="text-sm font-bold text-red-700 dark:text-red-400">Disconnected</span>
                          <span className="text-[10px] text-red-600/70 dark:text-red-400/60 font-semibold">Session has ended</span>
                       </div>
+                   </div>
+                )}
+
+                {session.status === "INITIALIZING" && (
+                   <div className="flex items-center gap-4 p-5 rounded-2xl bg-amber-50/50 dark:bg-amber-500/5 border border-amber-100 dark:border-amber-500/20">
+                      <div className="flex flex-col">
+                         <span className="text-sm font-bold text-amber-700 dark:text-amber-400">Booting Browser</span>
+                         <span className="text-[10px] text-amber-600/70 dark:text-amber-400/60 font-semibold">Preparing QR code...</span>
+                      </div>
+                      <FiRefreshCw className="ml-auto h-5 w-5 text-amber-500 animate-spin" />
                    </div>
                 )}
 
